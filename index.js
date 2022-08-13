@@ -1,4 +1,4 @@
-const bodyParser = require('body-parser');
+require('dotenv').config();
 const express = require('express'),
     cors = require('cors'),
     methodOverride = require('method-override'),
@@ -6,6 +6,7 @@ const express = require('express'),
     passport = require('passport'),
     nodemailer = require('nodemailer'),
     path = require('path'),
+    bodyParser = require('body-parser'),
     sendMail = require('./mail');
 
 const app = express();

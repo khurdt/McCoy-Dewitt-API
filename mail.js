@@ -1,19 +1,21 @@
-require('dotenv').config();
-console.log(process.env.WEBSITE_EMAIL, process.env.WEBSITE_EMAIL_PASS);
 const nodemailer = require('nodemailer');
+
+let secretEmail = process.env.WEBSITE_EMAIL;
+let secretPassword = process.env.WEBSITE_EMAIL_PASS;
+console.log(secretEmail, secretPassword);
 
 let transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.WEBSITE_EMAIL,
-    pass: process.env.WEBSITE_EMAIL_PASS,
+    user: secretEmail,
+    pass: secretPassword,
   },
 });
 
 const sendMail = (name, email, phone, message, callback) => {
   const mailOptions = {
-    from: email,
-    to: process.env.WEBSITE_EMAIL,
+    from: secretEmail,
+    to: secretEmail,
     subject: `${name} contacted you from your website`,
     html: `
     <div style="textalign:center;">
