@@ -1,4 +1,9 @@
+const path = require('path');
 const nodemailer = require('nodemailer');
+require('dotenv').config({
+  path: path.resolve(__dirname, './.env')
+});
+
 
 let secretEmail = process.env.WEBSITE_EMAIL;
 let secretPassword = process.env.WEBSITE_EMAIL_PASS;

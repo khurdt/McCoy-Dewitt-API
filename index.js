@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express'),
     cors = require('cors'),
     methodOverride = require('method-override'),
@@ -54,7 +53,7 @@ app.post('/contact', (req, res) => {
         if (err) {
             res.status(500).json({ message: 'Internal Error' })
         } else {
-            res.status(200).json({ message: 'Email Sent Successfully' });
+            res.status(200).json({ message: 'Email Sent Successfully', data });
         }
     });
 
