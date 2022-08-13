@@ -5,7 +5,8 @@ const express = require('express'),
     morgan = require('morgan'),
     passport = require('passport'),
     nodemailer = require('nodemailer'),
-    path = require('path');
+    path = require('path'),
+    sendMail = require('./mail');
 
 const app = express();
 
@@ -47,62 +48,15 @@ app.get('/', (req, res) => {
 });
 
 app.post('/contact', (req, res) => {
+    const { name, email, phone, message } = req.body;
+    sendMail(name, email, phone, message, function (err, data) {
+        if (err) {
+            res.status(500).json({ message: 'Internal Error' })
+        } else {
+            res.status(200).json({ message: 'Email Sent Successfully' });
+        }
+    });
 
-    res.json({
-        name: req.body.name,
-        email: req.body.email,
-        message: req.body.message
-    })
-    // var transporter = nodemailer.createTransport({
-    //     service: 'gmail',
-    //     auth: {
-    //         user: 'youremail@gmail.com',
-    //         pass: 'yourpassword'
-    //     }
-    // });
-
-    // var mailOptions = {
-    //     from: 'youremail@gmail.com',
-    //     to: 'myfriend@yahoo.com',
-    //     subject: 'Sending Email using Node.js',
-    //     text: 'That was easy!'
-    // };
-
-    // transporter.sendMail(mailOptions, function (error, info) {
-    //     if (error) {
-    //         console.log(error);
-    //     } else {
-    //         console.log('Email sent: ' + info.response);
-    //     }
-    // });
-
-    // const transporter = nodemailer.createTransport({
-    //     SES: ses
-    // });
-
-    // try {
-    //     if (name !== undefined) {
-    //         await transporter.sendMail({
-    //             from: process.env.EMAIL_ID, // sender address
-    //             to: process.env.EMAIL_ID, // receiver address
-    //             subject: `${name} contacted you from your portfolio website`, // subject line, taken from client request
-    //             html: `<p>${name}</p><p>${phone}</p><p>${email}</p><p>${message}</p>`
-    //         });
-    //     }
-    // } catch (error) {
-    //     console.log(error);
-    // }
-
-    // callback(null, {
-    //     statusCode: 200,
-    //     body: JSON.stringify(responseBody),
-    //     isBase64Encoded: false,
-    //     headers: {
-    //         'Access-Control-Allow-Headers': '*',
-    //         'Access-Control-Allow-Methods': 'POST',
-    //         'Access-Control-Allow-Origin': 'https://khurdt.github.io',
-    //     },
-    // });
 })
 
 const port = process.env.PORT || 8080;
