@@ -51,7 +51,7 @@ app.post('/contact', (req, res) => {
     const { name, email, phone, message } = req.body;
     sendMail(name, email, phone, message, function (err, data) {
         if (err) {
-            res.status(500).json({ message: 'Internal Error' })
+            res.status(500).json({ message: 'Internal Error', err })
         } else {
             res.status(200).json({ message: 'Email Sent Successfully', data });
         }

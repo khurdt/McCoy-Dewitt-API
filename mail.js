@@ -4,8 +4,8 @@ require('dotenv').config({
   path: path.resolve(__dirname, './.env')
 });
 
-let secretEmail = process.env.WEBSITE_EMAIL;
-let secretPassword = process.env.WEBSITE_EMAIL_PASS;
+let secretEmail = process.env.EMAIL;
+let secretPassword = process.env.PASSWORD;
 
 let transporter = nodemailer.createTransport({
   service: 'gmail',
