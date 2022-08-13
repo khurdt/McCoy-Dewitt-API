@@ -56,13 +56,29 @@ app.get('/', (req, res) => {
 
 app.post('/contact', (req, res) => {
     const { name, email, phone, message } = req.body;
-    sendEmail(name, email, phone, message, function (err, data) {
-        if (err) {
-            res.status(500).json({ message: 'Internal Error', err })
-        } else {
-            res.status(200).json({ message: 'Email Sent Successfully', data });
-        }
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: secretEmail,
+            pass: secretPassword,
+        },
     });
+
+    try {
+        if (name !== undefined) {
+            await transporter.sendMail({
+                from: secretEmail, // sender address
+                to: secretEmail, // receiver address
+                subject: `${name} contacted you from your portfolio website`, // subject line, taken from client request
+                html: `<p>${name}</p><p>${phone}</p><p>${email}</p><p>${message}</p>`
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'No GO', error });
+    }
+
+    res.status(200).json({ message: 'Email sent' });
     // sendMail(name, email, phone, message, function (err, data) {
     //     if (err) {
     //         res.status(500).json({ message: 'Internal Error', err })
