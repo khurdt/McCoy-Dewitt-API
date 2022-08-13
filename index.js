@@ -54,39 +54,9 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.post('/contact', (req, res, callback) => {
+app.post('/contact', (req, res) => {
     const { name, email, phone, message } = req.body;
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: secretEmail,
-            pass: secretPassword,
-        },
-    });
-
-    try {
-        if (name !== undefined) {
-            await transporter.sendMail({
-                from: secretEmail, // sender address
-                to: secretEmail, // receiver address
-                subject: `${name} contacted you from your portfolio website`, // subject line, taken from client request
-                html: `<p>${name}</p><p>${phone}</p><p>${email}</p><p>${message}</p>`
-            });
-        }
-    } catch (error) {
-        console.log(error);
-    }
-
-    callback(null, {
-        statusCode: 200,
-        body: JSON.stringify(responseBody),
-        isBase64Encoded: false,
-        headers: {
-            'Access-Control-Allow-Headers': '*',
-            'Access-Control-Allow-Methods': 'POST',
-            'Access-Control-Allow-Origin': 'http://localhost:3000',
-        },
-    });
+    res.json({ name, email, phone, message });
     // sendMail(name, email, phone, message, function (err, data) {
     //     if (err) {
     //         res.status(500).json({ message: 'Internal Error', err })
