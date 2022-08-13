@@ -54,7 +54,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.post('/contact', (req, res) => {
+app.post('/contact', (req, res, callback) => {
     const { name, email, phone, message } = req.body;
     res.json({ name, email, phone, message });
     // sendMail(name, email, phone, message, function (err, data) {
@@ -64,6 +64,16 @@ app.post('/contact', (req, res) => {
     //         res.status(200).json({ message: 'Email Sent Successfully', data });
     //     }
     // });
+    callback(null, {
+        statusCode: 200,
+        body: JSON.stringify(name, email, phone, message),
+        isBase64Encoded: false,
+        headers: {
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Origin': 'http://localhost:3000',
+        },
+    });
 });
 const port = process.env.PORT || 8080;
 
