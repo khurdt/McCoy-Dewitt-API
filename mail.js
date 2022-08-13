@@ -30,5 +30,5 @@ const sendMail = (name, email, phone, message, callback) => {
   })
 }
 
-modules.exports = sendMail;
+module.exports = sendMail;
 
