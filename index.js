@@ -56,7 +56,6 @@ app.get('/', (req, res) => {
 
 app.post('/contact', (req, res, callback) => {
     const { name, email, phone, message } = req.body;
-    res.json({ name, email, phone, message });
     // sendMail(name, email, phone, message, function (err, data) {
     //     if (err) {
     //         res.status(500).json({ message: 'Internal Error', err })
