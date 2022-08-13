@@ -1,3 +1,5 @@
+require('dotenv').config();
+console.log(process.env.WEBSITE_EMAIL, process.env.WEBSITE_EMAIL_PASS);
 const nodemailer = require('nodemailer');
 
 let transporter = nodemailer.createTransport({
@@ -11,7 +13,7 @@ let transporter = nodemailer.createTransport({
 const sendMail = (name, email, phone, message, callback) => {
   const mailOptions = {
     from: email,
-    to: 'dylan.dewitt@mccoydewitt.com',
+    to: process.env.WEBSITE_EMAIL,
     subject: `${name} contacted you from your website`,
     html: `
     <div style="textalign:center;">
