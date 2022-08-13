@@ -8,6 +8,13 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     sendMail = require('./mail');
 
+require('dotenv').config({
+    path: path.resolve(__dirname, './.env')
+});
+
+let secretEmail = process.env.EMAIL;
+let secretPassword = process.env.PASSWORD;
+
 const app = express();
 
 app.use(bodyParser.urlencoded({
@@ -49,14 +56,41 @@ app.get('/', (req, res) => {
 
 app.post('/contact', (req, res) => {
     const { name, email, phone, message } = req.body;
-    sendMail(name, email, phone, message, function (err, data) {
+    // sendMail(name, email, phone, message, function (err, data) {
+    //     if (err) {
+    //         res.status(500).json({ message: 'Internal Error', err })
+    //     } else {
+    //         res.status(200).json({ message: 'Email Sent Successfully', data });
+    //     }
+    // });
+
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: secretEmail,
+            pass: secretPassword,
+        },
+    });
+
+    const mailOptions = {
+        from: secretEmail,
+        to: secretEmail,
+        subject: `${name} contacted you from your website`,
+        html: `
+    <div style="textalign:center;">
+    <p>${message}</p>
+    <p>email: ${email}</p>
+    <p>phone: ${phone}</p>
+    </div>`
+    };
+
+    transporter.sendMail(mailOptions, function (err, data) {
         if (err) {
             res.status(500).json({ message: 'Internal Error', err })
         } else {
-            res.status(200).json({ message: 'Email Sent Successfully', data });
+            res.status(200).json({ message: 'Email Sent!', data })
         }
-    });
-
+    })
 });
 
 const port = process.env.PORT || 8080;
