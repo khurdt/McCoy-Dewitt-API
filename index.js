@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 
 let allowedOrigins = [
     'http://localhost:3000',
-    'https://mccoydewitt.com'
+    'https://www.mccoydewitt.com'
 ];
 
 //implementing limits using CORS
