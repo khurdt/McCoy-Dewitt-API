@@ -22,7 +22,7 @@ async function sendEmail(name, email, phone, message, callback) {
       service: 'gmail',
       auth: {
         type: 'OAuth2',
-        user: process.env.WEBSITE_EMAIL,
+        user: process.env.EMAIL,
         clientId: CLIENT_ID,
         clientSecret: CLIENT_SECRET,
         refreshToken: REFRESH_TOKEN,
@@ -30,8 +30,8 @@ async function sendEmail(name, email, phone, message, callback) {
       }
     })
     const mailOptions = {
-      from: process.env.WEBSITE_EMAIL,
-      to: process.env.WEBSITE_EMAIL,
+      from: process.env.EMAIL,
+      to: process.env.EMAIL,
       subject: `${name} contacted you from your website`,
       html: `
       <div style="textAlign:left;marginLeft:30px">
