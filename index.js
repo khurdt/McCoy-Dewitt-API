@@ -3,17 +3,9 @@ const express = require('express'),
     methodOverride = require('method-override'),
     morgan = require('morgan'),
     passport = require('passport'),
-    nodemailer = require('nodemailer'),
     path = require('path'),
     bodyParser = require('body-parser'),
     sendEmail = require('./mail');
-
-require('dotenv').config({
-    path: path.resolve(__dirname, './.env')
-});
-
-let secretEmail = process.env.EMAIL;
-let secretPassword = process.env.PASSWORD;
 
 const app = express();
 
