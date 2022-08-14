@@ -40,7 +40,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.post('/contact', (req, res, callback) => {
+app.post('/contact', (req, res) => {
     const { name, email, phone, message } = req.body;
     sendEmail(name, email, phone, message).then(result => {
         res.status(200).json('Email sent successfully', result)
