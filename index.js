@@ -44,20 +44,23 @@ app.use(methodOverride());
 
 app.use(morgan('common'));
 
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-    next();
-});
-
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.post('/contact', (req, res, callback) => {
     const { name, email, phone, message } = req.body;
-
+    sendEmail(name, email, phone, message).then(result => {
+        res.status(200).json('Email sent successfully', result)
+    }).catch(error => res.status(500).json('Internal Error', error));
 });
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+    next();
+});
+
 const port = process.env.PORT || 8080;
 
 app.listen(port, '0.0.0.0', () => {

@@ -3,41 +3,6 @@ require('dotenv').config({
   path: path.resolve(__dirname, './.env')
 });
 
-let secretEmail = process.env.EMAIL;
-let secretPassword = process.env.PASSWORD;
-
-let transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: secretEmail,
-    pass: secretPassword,
-  },
-});
-
-const sendMail = (name, email, phone, message, callback) => {
-  const mailOptions = {
-    from: secretEmail,
-    to: secretEmail,
-    subject: `${name} contacted you from your website`,
-    html: `
-    <div style="textalign:center;">
-    <p>${message}</p>
-    <p>email: ${email}</p>
-    <p>phone: ${phone}</p>
-    </div>`
-  };
-
-  transporter.sendMail(mailOptions, function (err, data) {
-    if (err) {
-      callback(err, null);
-    } else {
-      callback(null, data);
-    }
-  })
-}
-
-module.exports = sendMail;
-
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 
@@ -49,7 +14,7 @@ const REFRESH_TOKEN = '1//04eENtjfpvVRPCgYIARAAGAQSNwF-L9IrQEowZHqcbbxqqkduut_7s
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
 
-async function sendMail() {
+async function sendEmail(name, email, phone, message) {
   try {
     const accessToken = await oAuth2Client.getAccessToken()
 
@@ -69,7 +34,7 @@ async function sendMail() {
       to: process.env.WEBSITE_EMAIL,
       subject: `${name} contacted you from your website`,
       html: `
-      <div style="textalign:center;">
+      <div style="textAlign:left;marginLeft:30px">
       <p>${message}</p>
       <p>email: ${email}</p>
       <p>phone: ${phone}</p>
@@ -83,5 +48,4 @@ async function sendMail() {
   }
 }
 
-sendMail().then(result => console.log('Email sent...'), result)
-  .catch(error => console.log(error.message));
+module.exports = sendEmail
