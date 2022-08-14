@@ -43,9 +43,11 @@ app.get('/', (req, res) => {
 
 app.post('/contact', (req, res) => {
     const { name, email, phone, message } = req.body;
-    sendEmail(name, email, phone, message).then(result => {
-        res.status(200).json('Email sent successfully', result)
-    }).catch(error => res.status(500).json('Internal Error', error));
+
+    res.status(200).json(name, email, phone, message);
+    // sendEmail(name, email, phone, message).then(result => {
+    //     res.status(200).json('Email sent successfully', result)
+    // }).catch(error => res.status(500).json('Internal Error', error));
 });
 
 app.use((err, req, res, next) => {
