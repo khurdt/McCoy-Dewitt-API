@@ -14,7 +14,7 @@ const REFRESH_TOKEN = '1//04eENtjfpvVRPCgYIARAAGAQSNwF-L9IrQEowZHqcbbxqqkduut_7s
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
 
-async function sendEmail(name, email, phone, message, callback) {
+async function sendEmail(name, email, phone, message) {
   try {
     const accessToken = await oAuth2Client.getAccessToken()
 
@@ -43,18 +43,10 @@ async function sendEmail(name, email, phone, message, callback) {
 
     const result = await transport.sendMail(mailOptions);
 
-    callback(null, {
-      statusCode: 200,
-      body: JSON.stringify(result),
-      isBase64Encoded: false,
-      headers: {
-        'Access-Control-Allow-Headers': '*',
-        'Access-Control-Allow-Methods': 'POST',
-        'Access-Control-Allow-Origin': 'http://localhost:3000',
-      },
-    });
+    return result;
+
   } catch (error) {
-    callback(error, null)
+    return error;
   }
 }
 
