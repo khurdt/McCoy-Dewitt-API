@@ -46,6 +46,7 @@ async function sendEmail(name, email, phone, message) {
     return result;
 
   } catch (error) {
+
     return error;
   }
 }
