@@ -56,22 +56,7 @@ app.get('/', (req, res) => {
 
 app.post('/contact', (req, res, callback) => {
     const { name, email, phone, message } = req.body;
-    // sendMail(name, email, phone, message, function (err, data) {
-    //     if (err) {
-    //         res.status(500).json({ message: 'Internal Error', err })
-    //     } else {
-    //         res.status(200).json({ message: 'Email Sent Successfully', data });
-    //     }
-    // });
-    callback(null, {
-        statusCode: 200,
-        body: JSON.stringify(name, email, phone, message),
-        isBase64Encoded: false,
-        headers: {
-            'Access-Control-Allow-Headers': '*',
-            'Access-Control-Allow-Methods': 'POST',
-            'Access-Control-Allow-Origin': 'http://localhost:3000',
-        },
+
     });
 });
 const port = process.env.PORT || 8080;
