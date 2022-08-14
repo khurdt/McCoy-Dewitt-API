@@ -57,7 +57,6 @@ app.get('/', (req, res) => {
 app.post('/contact', (req, res, callback) => {
     const { name, email, phone, message } = req.body;
 
-    });
 });
 const port = process.env.PORT || 8080;
 

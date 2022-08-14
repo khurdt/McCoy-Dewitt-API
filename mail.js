@@ -1,5 +1,4 @@
 const path = require('path');
-const nodemailer = require('nodemailer');
 require('dotenv').config({
   path: path.resolve(__dirname, './.env')
 });
@@ -39,43 +38,6 @@ const sendMail = (name, email, phone, message, callback) => {
 
 module.exports = sendMail;
 
-<<<<<<< HEAD
-module.exports.sendEmail = async (name, email, phone, message, callback) => {
-
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: secretEmail,
-      pass: secretPassword,
-    },
-  });
-
-  try {
-    if (name !== undefined) {
-      await transporter.sendMail({
-        from: secretEmail, // sender address
-        to: secretEmail, // receiver address
-        subject: `${name} contacted you from your portfolio website`, // subject line, taken from client request
-        html: `<p>${name}</p><p>${phone}</p><p>${email}</p><p>${message}</p>`
-      });
-    }
-  } catch (error) {
-    console.log(error);
-  }
-
-  callback(null, {
-    statusCode: 200,
-    body: JSON.stringify(responseBody),
-    isBase64Encoded: false,
-    headers: {
-      'Access-Control-Allow-Headers': '*',
-      'Access-Control-Allow-Methods': 'POST',
-      'Access-Control-Allow-Origin': 'http://localhost:3000',
-    },
-  });
-}
-
-=======
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 
@@ -123,4 +85,3 @@ async function sendMail() {
 
 sendMail().then(result => console.log('Email sent...'), result)
   .catch(error => console.log(error.message));
->>>>>>> 7d7091c (added OAUTH GMAIL SERVICE)
