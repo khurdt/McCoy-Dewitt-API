@@ -5,6 +5,7 @@ require('dotenv').config({
 
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
+const e = require('cors');
 
 const CLIENT_ID = '728614009915-2apnsbdon3ajhpd82mg83u79urderhvb.apps.googleusercontent.com'
 const CLIENT_SECRET = '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'
@@ -41,9 +42,25 @@ async function sendEmail(name, email, phone, message) {
       </div>`
     };
 
-    const result = await transport.sendMail(mailOptions);
-
-    return result;
+    await transport.sendMail(mailOptions, function (err, data) {
+      if (err) {
+        return {
+          statusCode: 500,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify({ error })
+        }
+      } else {
+        return {
+          statusCode: 200,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify({ data })
+        };
+      }
+    })
 
   } catch (error) {
 
