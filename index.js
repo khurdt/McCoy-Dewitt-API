@@ -5,7 +5,8 @@ const express = require('express'),
     passport = require('passport'),
     path = require('path'),
     bodyParser = require('body-parser'),
-    sendEmail = require('./mail');
+    sendEmail = require('./mail'),
+    getAccessToken = require('./mail');
 
 const app = express();
 
@@ -43,9 +44,16 @@ app.get('/', (req, res) => {
 
 app.post('/contact', (req, res) => {
     const { name, email, phone, message } = req.body;
-    sendEmail(name, email, phone, message).then(result => {
-        res.status(200).json('Email sent successfully', result)
-    }).catch(error => res.status(500).json('Internal Error', error));
+
+    getAccessToken().then(result => {
+        res.status(200).json('got token', result)
+    }).catch((error) => {
+        res.status(200).json('something went wrong', error);
+    });
+
+    // sendEmail(name, email, phone, message).then(result => {
+    //     res.status(200).json('Email sent successfully', result)
+    // }).catch(error => res.status(500).json('Internal Error', error));
 });
 
 app.use((err, req, res, next) => {

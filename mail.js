@@ -5,7 +5,6 @@ require('dotenv').config({
 
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
-const e = require('cors');
 
 const CLIENT_ID = '728614009915-2apnsbdon3ajhpd82mg83u79urderhvb.apps.googleusercontent.com'
 const CLIENT_SECRET = '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'
@@ -13,11 +12,54 @@ const REDIRECT_URI = 'https://developers.google.com/oauthplayground'
 const REFRESH_TOKEN = '1//04eENtjfpvVRPCgYIARAAGAQSNwF-L9IrQEowZHqcbbxqqkduut_7sbeI1xWMMDuD5qV1UaHOtCbx_Yz9VJh7aF1PY-yDjUZq0oc'
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
-oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-async function sendEmail(name, email, phone, message) {
+async function getAccessToken() {
+  // The values used to instantiate the OAuthClient are at the top of the file
+  const oAuth2Client = new google.auth.OAuth2(
+    CLIENT_ID,
+    CLIENT_SECRET,
+    REDIRECT_URI[0]
+  );
+
+  return new Promise((resolve, reject) => {
+    /**
+     *  Exchange authorization code for access token with a “callback” after the exchange,
+     *  The callback in this case is an arrow function with the results as parameters: “err” and “token.”
+     */
+
+    oAuth2Client.getAccessToken((err, token) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(token);
+    });
+  })
+    .then((token) => {
+      // Respond with OAuth token 
+      return {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify(token),
+      };
+    })
+    .catch((err) => {
+      // Handle error
+      console.error(err);
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify(err),
+      };
+    });
+};
+
+async function sendEmail(name, email, phone, message, accesstoken) {
   try {
-    const accessToken = await oAuth2Client.getAccessToken()
 
     const transport = nodemailer.createTransport({
       service: 'gmail',
@@ -29,7 +71,8 @@ async function sendEmail(name, email, phone, message) {
         refreshToken: REFRESH_TOKEN,
         accessToken: accessToken
       }
-    })
+    });
+
     const mailOptions = {
       from: process.env.EMAIL,
       to: process.env.EMAIL,
@@ -42,25 +85,7 @@ async function sendEmail(name, email, phone, message) {
       </div>`
     };
 
-    result = await transport.sendMail(mailOptions, function (err, data) {
-      if (err) {
-        return {
-          statusCode: 500,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-          },
-          body: JSON.stringify({ err })
-        }
-      } else {
-        return {
-          statusCode: 200,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-          },
-          body: JSON.stringify({ data })
-        };
-      }
-    })
+    result = await transport.sendMail(mailOptions);
 
     return result;
 
@@ -70,4 +95,4 @@ async function sendEmail(name, email, phone, message) {
   }
 }
 
-module.exports = sendEmail
+module.exports = { sendEmail, getAccessToken };
