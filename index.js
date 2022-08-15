@@ -5,8 +5,7 @@ const express = require('express'),
     passport = require('passport'),
     path = require('path'),
     bodyParser = require('body-parser'),
-    sendEmail = require('./mail'),
-    getAccessToken = require('./mail');
+    sendEmail = require('./mail');
 
 const app = express();
 
