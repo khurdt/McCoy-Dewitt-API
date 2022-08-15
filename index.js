@@ -45,15 +45,21 @@ app.get('/', (req, res) => {
 app.post('/contact', (req, res) => {
     const { name, email, phone, message } = req.body;
 
-    getAccessToken().then(result => {
-        res.status(200).json('got token', result)
-    }).catch((error) => {
-        res.status(200).json('something went wrong', error);
-    });
-
-    // sendEmail(name, email, phone, message).then(result => {
-    //     res.status(200).json('Email sent successfully', result)
-    // }).catch(error => res.status(500).json('Internal Error', error));
+    sendEmail(name, email, phone, message).then(result => {
+        res.json('Email sent successfully', {
+            statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify(result),
+        })
+    }).catch(error => res.json('Internal Error', {
+        statusCode: 500,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify(error),
+    }));
 });
 
 app.use((err, req, res, next) => {

@@ -58,9 +58,11 @@ async function getAccessToken() {
     });
 };
 
-async function sendEmail(name, email, phone, message, accesstoken) {
-  try {
+async function sendEmail(name, email, phone, message) {
 
+  accessToken = await oAuth2Client.getAccessToken();
+
+  try {
     const transport = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -94,5 +96,11 @@ async function sendEmail(name, email, phone, message, accesstoken) {
     return error;
   }
 }
+
+sendEmail('Kevin', 'Hurdt', '@', '123', 'this is a test').then(result => {
+  console.log('email sent', result)
+}).catch((error) => {
+  console.log('something went wrong', error);
+});
 
 module.exports = { sendEmail, getAccessToken };
