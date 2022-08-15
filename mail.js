@@ -14,9 +14,73 @@ const REFRESH_TOKEN = '1//04eENtjfpvVRPCgYIARAAGAQSNwF-L9IrQEowZHqcbbxqqkduut_7s
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
+async function getToken() {
+  accessToken = await new Promise((resolve, reject) => {
+
+    oAuth2Client.getAccessToken((err, token) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(token);
+    });
+  })
+    .then((token) => {
+      // Respond with OAuth token 
+      return {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify(token),
+      };
+    })
+    .catch((err) => {
+      // Handle error
+      console.error(err);
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify(err),
+      };
+    });
+
+  return accessToken;
+}
+
 async function sendEmail(name, email, phone, message) {
 
-  accessToken = await oAuth2Client.getAccessToken();
+  accessToken = await new Promise((resolve, reject) => {
+
+    oAuth2Client.getAccessToken((err, token) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(token);
+    });
+  })
+    .then((token) => {
+      // Respond with OAuth token 
+      return {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify(token),
+      };
+    })
+    .catch((err) => {
+      // Handle error
+      console.error(err);
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify(err),
+      };
+    });
 
   try {
     const transport = nodemailer.createTransport({
@@ -53,10 +117,37 @@ async function sendEmail(name, email, phone, message) {
   }
 }
 
-sendEmail('Kevin', 'Hurdt', '@', '123', 'this is a test').then(result => {
-  console.log('email sent', result)
-}).catch((error) => {
-  console.log('something went wrong', error);
-});
+// sendEmail('Kevin', 'Hurdt', '@', '123', 'this is a test').then(result => {
+//   console.log('email sent', result)
+// }).catch((error) => {
+//   console.log('something went wrong', error);
+// });
+
+// getToken().then(result => {
+//   console.log('got token', result)
+// }).catch((error) => {
+//   console.log('something went wrong', error);
+// });
+
+// getToken().then(result => {
+//   sendEmail('Kevin', 'Hurdt', '@', '123', 'this is a test', JSON.parse(result.body)).then(result => {
+//     console.log('Email sent successfully', {
+//       statusCode: 200,
+//       headers: {
+//         'Access-Control-Allow-Origin': '*',
+//       },
+//       body: JSON.stringify(result),
+//     })
+//   }).catch(error => console.log('failed to send email with token', {
+//     statusCode: 500,
+//     headers: {
+//       'Access-Control-Allow-Origin': '*',
+//     },
+//     body: JSON.stringify(error),
+//   }));
+// }).catch((error) => {
+//   console.log('failed to get token', error);
+// });
 
 module.exports = sendEmail;
+module.exports = getToken;

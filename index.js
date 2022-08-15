@@ -5,7 +5,8 @@ const express = require('express'),
     passport = require('passport'),
     path = require('path'),
     bodyParser = require('body-parser'),
-    sendEmail = require('./mail');
+    sendEmail = require('./mail'),
+    getToken = require('./mail');
 
 const app = express();
 
@@ -43,22 +44,25 @@ app.get('/', (req, res) => {
 
 app.post('/contact', (req, res) => {
     const { name, email, phone, message } = req.body;
-
-    sendEmail(name, email, phone, message).then(result => {
-        res.json('Email sent successfully', {
-            statusCode: 200,
+    getToken().then(result => {
+        sendEmail(name, email, phone, message, JSON.parse(result.body)).then(result => {
+            res.json('Email sent successfully', {
+                statusCode: 200,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                },
+                body: JSON.stringify(result),
+            })
+        }).catch(error => res.json('failed to send email with token', {
+            statusCode: 500,
             headers: {
                 'Access-Control-Allow-Origin': '*',
             },
-            body: JSON.stringify(result),
-        })
-    }).catch(error => res.json('Internal Error', {
-        statusCode: 500,
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify(error),
-    }));
+            body: JSON.stringify(error),
+        }));
+    }).catch((error) => {
+        res.json('failed to get token', error);
+    });
 });
 
 app.use((err, req, res, next) => {
