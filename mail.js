@@ -42,14 +42,14 @@ async function sendEmail(name, email, phone, message) {
       </div>`
     };
 
-    await transport.sendMail(mailOptions, function (err, data) {
+    result = await transport.sendMail(mailOptions, function (err, data) {
       if (err) {
         return {
           statusCode: 500,
           headers: {
             'Access-Control-Allow-Origin': '*',
           },
-          body: JSON.stringify({ error })
+          body: JSON.stringify({ err })
         }
       } else {
         return {
@@ -61,6 +61,8 @@ async function sendEmail(name, email, phone, message) {
         };
       }
     })
+
+    return result;
 
   } catch (error) {
 
