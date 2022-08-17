@@ -35,7 +35,11 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(bodyParser.json());
-app.use(cors());
+
+var corsOptions = {
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 //this must come after the middleware bodyParser urlencoded
 
 /**
@@ -101,7 +105,7 @@ app.get('/documentation.html', (req, res) => {
  * @param username
  * @param movieID
 */
-app.post('/contact', (req, res) => {
+app.post('/contact', cors(corsOptions), (req, res) => {
     const { name, email, phone, message } = req.body;
     res.json(name, email, phone, message);
 });
