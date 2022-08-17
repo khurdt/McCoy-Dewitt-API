@@ -53,13 +53,22 @@ app.get('/', (req, res) => {
 app.post('/contact', (req, res) => {
     const { name, email, phone, message } = req.body;
 
-    returnBody(name, email, phone, message, function (err, body) {
-        if (err) {
-            res.json('error', err);
-        } else {
-            res.json('success', body)
-        }
-    })
+    responseBody = {
+        name: name,
+        email: email,
+        phone: phone,
+        message: message
+    }
+
+    res.json(responseBody);
+
+    // returnBody(name, email, phone, message, function (err, body) {
+    //     if (err) {
+    //         res.json('error', err);
+    //     } else {
+    //         res.json('success', body)
+    //     }
+    // })
 
 });
 
