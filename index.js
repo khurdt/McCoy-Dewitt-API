@@ -16,11 +16,7 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 
-let allowedOrigins = [
-    'http://localhost:3000',
-    'https://www.mccoydewitt.com',
-    'https://developers.google.com'
-];
+let allowedOrigins = ['*'];
 
 //implementing limits using CORS
 app.use(cors({
