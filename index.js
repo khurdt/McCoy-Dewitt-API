@@ -43,26 +43,25 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.post('/contact', (req, res) => {
+app.post('/contact', (req, res, callback) => {
     const { name, email, phone, message } = req.body;
     getToken().then(result => {
         sendEmail(name, email, phone, message, JSON.parse(result.body)).then(result => {
-            res.json('Email sent successfully', {
+            callback(null, {
                 statusCode: 200,
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                },
                 body: JSON.stringify(result),
-            })
-        }).catch(error => res.json('failed to send email with token', {
-            statusCode: 500,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-            },
-            body: JSON.stringify(error),
-        }));
+                isBase64Encoded: false,
+                headers: {
+                    'Access-Control-Allow-Headers': '*',
+                    'Access-Control-Allow-Methods': 'POST',
+                    'Access-Control-Allow-Origin': 'http://localhost:3000',
+                },
+            });
+        }).catch(error => {
+            callback(error, null)
+        });
     }).catch((error) => {
-        res.json('failed to get token', error);
+        callback(error, null);
     });
 });
 
