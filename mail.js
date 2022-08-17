@@ -9,7 +9,7 @@ const OAuth2 = google.auth.OAuth2
 
 const clientId = process.env.CLIENT_ID,
   clientSecret = process.env.CLIENT_SECRET,
-  redirectUri = process.env.REDIRECT_URI,
+  redirectUri = process.env.REDIRECT_URIS,
   refreshToken = process.env.REFRESH_TOKEN
 
 const oAuth2Client = new OAuth2(clientId, clientSecret, redirectUri)
