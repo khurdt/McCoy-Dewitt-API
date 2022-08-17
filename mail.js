@@ -5,14 +5,15 @@ require('dotenv').config({
 
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
+const OAuth2 = google.auth.OAuth2
 
-const CLIENT_ID = '728614009915-2apnsbdon3ajhpd82mg83u79urderhvb.apps.googleusercontent.com'
-const CLIENT_SECRET = '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'
-const REDIRECT_URI = 'https://developers.google.com/oauthplayground'
-const REFRESH_TOKEN = '1//04eENtjfpvVRPCgYIARAAGAQSNwF-L9IrQEowZHqcbbxqqkduut_7sbeI1xWMMDuD5qV1UaHOtCbx_Yz9VJh7aF1PY-yDjUZq0oc'
+const clientId = process.env.CLIENT_ID,
+  clientSecret = process.env.CLIENT_SECRET,
+  redirectUri = process.env.REDIRECT_URI,
+  refreshToken = process.env.REFRESH_TOKEN
 
-const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
-oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+const oAuth2Client = new OAuth2(clientId, clientSecret, redirectUri)
+oAuth2Client.setCredentials({ refresh_token: refreshToken });
 
 async function getToken() {
   accessToken = await new Promise((resolve, reject) => {
@@ -88,9 +89,9 @@ async function sendEmail(name, email, phone, message) {
       auth: {
         type: 'OAuth2',
         user: process.env.EMAIL,
-        clientId: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        refreshToken: REFRESH_TOKEN,
+        clientId: clientId,
+        clientSecret: clientSecret,
+        refreshToken: refreshToken,
         accessToken: accessToken
       }
     });
@@ -107,9 +108,19 @@ async function sendEmail(name, email, phone, message) {
       </div>`
     };
 
-    result = await transport.sendMail(mailOptions);
-
-    return result;
+    transport.sendMail(mailOptions, function (error, result) {
+      if (error) {
+        return error;
+      } else {
+        return {
+          statusCode: 200,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify(result),
+        };
+      }
+    });
 
   } catch (error) {
 
