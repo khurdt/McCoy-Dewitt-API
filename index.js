@@ -64,11 +64,6 @@ app.get('/', (req, res) => {
 
 //--------CREATE or POST--------------------------------------------------------------------------
 
-/**
- * adds a movie id to favorite movie array in database
- * @param username
- * @param movieID
-*/
 app.post('/contact', (req, res) => {
     sendEmail(
         req.body.name,
