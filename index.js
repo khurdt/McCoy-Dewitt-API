@@ -26,7 +26,7 @@ const app = express();
  * between client, server, and database and then parse them as they are recieved.
  */
 app.use(bodyParser.urlencoded({
-    extended: false
+    extended: true
 }));
 
 app.use(bodyParser.json());
