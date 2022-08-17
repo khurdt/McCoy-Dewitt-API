@@ -93,22 +93,6 @@ async function sendEmail(name, email, phone, message) {
   }
 }
 
-async function returnBody(name, email, phone, message) {
-  responseBody = {
-    name: name,
-    email: email,
-    phone: phone,
-    message: message
-  }
-  return {
-    statusCode: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-    },
-    body: JSON.stringify(responseBody),
-  };
-}
-
 // sendEmail('Kevin', 'Hurdt', '@', '123', 'this is a test').then(result => {
 //   console.log('email sent', result)
 // }).catch((error) => {

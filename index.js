@@ -87,11 +87,19 @@ app.get('/documentation.html', (req, res) => {
  * @param username
  * @param movieID
 */
-app.options('/contact', cors())
 app.post('/contact', cors(corsOptionsDelegate), (req, res) => {
     const { name, email, phone, message } = req.body;
-    res.json(name, email, phone, message);
-});
+
+    sendEmail(name, email, phone, message).then(result => {
+        res.json('Email sent successfully', result)
+    }).catch(error => console.log('failed to send email with token', {
+        statusCode: 500,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify(error),
+    }));
+})
 
 //--------PUT or UPDATE--------------------------------------------------------------------------------
 
