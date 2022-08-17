@@ -8,6 +8,23 @@ const express = require('express'),
     sendEmail = require('./mail'),
     getToken = require('./mail');
 
+const path = require('path');
+require('dotenv').config({
+    path: path.resolve(__dirname, './.env')
+});
+
+const nodemailer = require('nodemailer');
+const { google } = require('googleapis');
+const OAuth2 = google.auth.OAuth2
+
+const clientId = process.env.CLIENT_ID,
+    clientSecret = process.env.CLIENT_SECRET,
+    redirectUri = process.env.REDIRECT_URIS,
+    refreshToken = process.env.REFRESH_TOKEN
+
+const oAuth2Client = new OAuth2(clientId, clientSecret, redirectUri)
+oAuth2Client.setCredentials({ refresh_token: refreshToken });
+
 const app = express();
 
 app.use(bodyParser.urlencoded({
@@ -42,23 +59,67 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.post('/contact', (req, res) => {
+app.post('/contact', (req, res, callback) => {
     const { name, email, phone, message } = req.body;
-    getToken().then(result => {
-        sendEmail(name, email, phone, message, JSON.parse(result.body)).then(result => {
-            res.json('Email sent successfully', result)
-        }).catch(error => res.json('failed to send email with token', {
-            statusCode: 500,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-            },
-            body: JSON.stringify(error),
-        }));
-    }).catch((error) => {
-        res.json('failed to get token', error);
+
+    accessToken = await oAuth2Client.getAccessToken();
+
+    const transport = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            type: 'OAuth2',
+            user: process.env.EMAIL,
+            clientId: clientId,
+            clientSecret: clientSecret,
+            refreshToken: refreshToken,
+            accessToken: accessToken
+        }
     });
-    res.setHeader("Access-Control-Allow-Origin", "*")
+
+    const mailOptions = {
+        from: process.env.EMAIL,
+        to: process.env.EMAIL,
+        subject: `${name} contacted you from your website`,
+        html: `
+            <div style="textAlign:left;marginLeft:30px">
+            <p>${message}</p>
+            <p>email: ${email}</p>
+            <p>phone: ${phone}</p>
+            </div>`
+    };
+
+    try {
+        await transport.sendMail(mailOptions)
+    } catch (error) {
+        res.json('problem at transport.sendMail', error);
+    }
+
+    callback(null, {
+        statusCode: 200,
+        body: JSON.stringify(),
+        isBase64Encoded: false,
+        headers: {
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Origin': 'http://localhost:3000',
+        },
+    });
+
 });
+
+// getToken().then(result => {
+//     sendEmail(name, email, phone, message, JSON.parse(result.body)).then(result => {
+//         res.json('Email sent successfully', result)
+//     }).catch(error => res.json('failed to send email with token', {
+//         statusCode: 500,
+//         headers: {
+//             'Access-Control-Allow-Origin': '*',
+//         },
+//         body: JSON.stringify(error),
+//     }));
+// }).catch((error) => {
+//     res.json('failed to get token', error);
+// });
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
