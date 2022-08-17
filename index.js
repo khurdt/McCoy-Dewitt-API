@@ -71,8 +71,8 @@ app.post('/contact', (req, res) => {
         req.body.phone,
         req.body.message
     ).then(result => {
-        res.json('Email sent successfully', result)
-    }).catch(error => console.log('failed to send email with token', error));
+        res.status(200).json(result)
+    }).catch(error => res.status(500).json(error));
 })
 
 //--------PUT or UPDATE--------------------------------------------------------------------------------
