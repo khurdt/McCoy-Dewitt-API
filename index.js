@@ -1,7 +1,8 @@
 const express = require('express'),
     bodyParser = require('body-parser'),
     path = require('path'),
-    cors = require('cors');
+    cors = require('cors'),
+    sendEmail = require('./mail');
 
 // const { check, validationResult } = require('express-validator');
 /**
@@ -38,6 +39,7 @@ app.use(bodyParser.json());
 let allowedOrigins = [
     'https://www.mccoydewitt.com',
     'http://localhost:3000',
+    'http://127.0.0.1:8080'
 ];
 
 //implementing limits using CORS
@@ -67,18 +69,15 @@ app.get('/', (req, res) => {
  * @param username
  * @param movieID
 */
-app.post('/contact', (req, res) => {
-    const { name, email, phone, message } = req.body;
-
-    sendEmail(name, email, phone, message).then(result => {
+app.get('/contact', (req, res) => {
+    sendEmail(
+        req.body.name,
+        req.body.email,
+        req.body.phone,
+        req.body.message
+    ).then(result => {
         res.json('Email sent successfully', result)
-    }).catch(error => console.log('failed to send email with token', {
-        statusCode: 500,
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify(error),
-    }));
+    }).catch(error => console.log('failed to send email with token', error));
 })
 
 //--------PUT or UPDATE--------------------------------------------------------------------------------
@@ -91,7 +90,7 @@ app.post('/contact', (req, res) => {
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).send('Something broke!');
+    res.status(500).json('Something broke!', err);
     next();
 });
 

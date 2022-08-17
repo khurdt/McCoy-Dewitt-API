@@ -17,36 +17,38 @@ oAuth2Client.setCredentials({ refresh_token: refreshToken });
 
 async function sendEmail(name, email, phone, message) {
 
-  accessToken = await new Promise((resolve, reject) => {
+  accessToken = await oAuth2Client.getAccessToken();
 
-    oAuth2Client.getAccessToken((err, token) => {
-      if (err) {
-        return reject(err);
-      }
-      return resolve(token);
-    });
-  })
-    .then((token) => {
-      // Respond with OAuth token 
-      return {
-        statusCode: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify(token),
-      };
-    })
-    .catch((err) => {
-      // Handle error
-      console.error(err);
-      return {
-        statusCode: 500,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify(err),
-      };
-    });
+  // accessToken = await new Promise((resolve, reject) => {
+
+  //   oAuth2Client.getAccessToken((err, token) => {
+  //     if (err) {
+  //       return reject(err);
+  //     }
+  //     return resolve(token);
+  //   });
+  // })
+  //   .then((token) => {
+  //     // Respond with OAuth token 
+  //     return {
+  //       statusCode: 200,
+  //       headers: {
+  //         'Access-Control-Allow-Origin': '*',
+  //       },
+  //       body: JSON.stringify(token),
+  //     };
+  //   })
+  //   .catch((err) => {
+  //     // Handle error
+  //     console.error(err);
+  //     return {
+  //       statusCode: 500,
+  //       headers: {
+  //         'Access-Control-Allow-Origin': '*',
+  //       },
+  //       body: JSON.stringify(err),
+  //     };
+  //   });
 
   try {
     const transport = nodemailer.createTransport({
@@ -73,19 +75,9 @@ async function sendEmail(name, email, phone, message) {
       </div>`
     };
 
-    transport.sendMail(mailOptions, function (error, result) {
-      if (error) {
-        return error;
-      } else {
-        return {
-          statusCode: 200,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-          },
-          body: JSON.stringify(result),
-        };
-      }
-    });
+    let result = await transport.sendMail(mailOptions);
+
+    return result;
 
   } catch (error) {
 
@@ -126,5 +118,3 @@ async function sendEmail(name, email, phone, message) {
 // });
 
 module.exports = sendEmail;
-module.exports = getToken;
-module.exports = returnBody;
