@@ -15,41 +15,6 @@ const clientId = process.env.CLIENT_ID,
 const oAuth2Client = new OAuth2(clientId, clientSecret, redirectUri)
 oAuth2Client.setCredentials({ refresh_token: refreshToken });
 
-async function getToken() {
-  accessToken = await new Promise((resolve, reject) => {
-
-    oAuth2Client.getAccessToken((err, token) => {
-      if (err) {
-        return reject(err);
-      }
-      return resolve(token);
-    });
-  })
-    .then((token) => {
-      // Respond with OAuth token 
-      return {
-        statusCode: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify(token),
-      };
-    })
-    .catch((err) => {
-      // Handle error
-      console.error(err);
-      return {
-        statusCode: 500,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify(err),
-      };
-    });
-
-  return accessToken;
-}
-
 async function sendEmail(name, email, phone, message) {
 
   accessToken = await new Promise((resolve, reject) => {
@@ -128,6 +93,22 @@ async function sendEmail(name, email, phone, message) {
   }
 }
 
+async function returnBody(name, email, phone, message) {
+  responseBody = {
+    name: name,
+    email: email,
+    phone: phone,
+    message: message
+  }
+  return {
+    statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+    body: JSON.stringify(responseBody),
+  };
+}
+
 // sendEmail('Kevin', 'Hurdt', '@', '123', 'this is a test').then(result => {
 //   console.log('email sent', result)
 // }).catch((error) => {
@@ -162,3 +143,4 @@ async function sendEmail(name, email, phone, message) {
 
 module.exports = sendEmail;
 module.exports = getToken;
+module.exports = returnBody;

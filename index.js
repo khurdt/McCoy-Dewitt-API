@@ -6,24 +6,8 @@ const express = require('express'),
     path = require('path'),
     bodyParser = require('body-parser'),
     sendEmail = require('./mail'),
-    getToken = require('./mail');
-
-const path = require('path');
-require('dotenv').config({
-    path: path.resolve(__dirname, './.env')
-});
-
-const nodemailer = require('nodemailer');
-const { google } = require('googleapis');
-const OAuth2 = google.auth.OAuth2
-
-const clientId = process.env.CLIENT_ID,
-    clientSecret = process.env.CLIENT_SECRET,
-    redirectUri = process.env.REDIRECT_URIS,
-    refreshToken = process.env.REFRESH_TOKEN
-
-const oAuth2Client = new OAuth2(clientId, clientSecret, redirectUri)
-oAuth2Client.setCredentials({ refresh_token: refreshToken });
+    getToken = require('./mail'),
+    returnBody = require('./mail');
 
 const app = express();
 
@@ -33,30 +17,30 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 
-const corsOptions = {
-    origin: 'http://localhost:3000',
-    credentials: true,            //access-control-allow-credentials:true
-    optionSuccessStatus: 200
-}
-app.use(cors(corsOptions));
+// const corsOptions = {
+//     origin: 'http://localhost:3000',
+//     credentials: true,            //access-control-allow-credentials:true
+//     optionSuccessStatus: 200
+// }
+// app.use(cors(corsOptions));
 
-// let allowedOrigins = [
-//     'https://www.mccoydewitt.com',
-//     'http://localhost:3000'
-// ];
+let allowedOrigins = [
+    'https://www.mccoydewitt.com',
+    'http://localhost:3000'
+];
 
-// //implementing limits using CORS
-// app.use(cors({
-//     origin: (origin, callback) => {
-//         if (!origin) return callback(null, true);
-//         if (allowedOrigins.indexOf(origin) === -1) {
-//             //If a specific origin isn't found on the list of allowed origins
-//             let message = 'The CORS policy for this application does not allow access from origin ' + origin;
-//             return callback(new Error(message), false);
-//         }
-//         return callback(null, true);
-//     }
-// }));
+//implementing limits using CORS
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            //If a specific origin isn't found on the list of allowed origins
+            let message = 'The CORS policy for this application does not allow access from origin ' + origin;
+            return callback(new Error(message), false);
+        }
+        return callback(null, true);
+    }
+}));
 
 app.use(methodOverride());
 
@@ -66,56 +50,21 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.post('/contact', (req, res, callback) => {
+app.post('/contact', (req, res) => {
     const { name, email, phone, message } = req.body;
 
-    accessToken = await oAuth2Client.getAccessToken();
-
-    const transport = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            type: 'OAuth2',
-            user: process.env.EMAIL,
-            clientId: clientId,
-            clientSecret: clientSecret,
-            refreshToken: refreshToken,
-            accessToken: accessToken
+    returnBody(name, email, phone, message, function (err, body) {
+        if (err) {
+            res.json('error', err);
+        } else {
+            res.json('success', body)
         }
-    });
-
-    const mailOptions = {
-        from: process.env.EMAIL,
-        to: process.env.EMAIL,
-        subject: `${name} contacted you from your website`,
-        html: `
-            <div style="textAlign:left;marginLeft:30px">
-            <p>${message}</p>
-            <p>email: ${email}</p>
-            <p>phone: ${phone}</p>
-            </div>`
-    };
-
-    try {
-        await transport.sendMail(mailOptions)
-    } catch (error) {
-        res.json('problem at transport.sendMail', error);
-    }
-
-    callback(null, {
-        statusCode: 200,
-        body: JSON.stringify(),
-        isBase64Encoded: false,
-        headers: {
-            'Access-Control-Allow-Headers': '*',
-            'Access-Control-Allow-Methods': 'POST',
-            'Access-Control-Allow-Origin': 'http://localhost:3000',
-        },
-    });
+    })
 
 });
 
-// getToken().then(result => {
-//     sendEmail(name, email, phone, message, JSON.parse(result.body)).then(result => {
+
+//     sendEmail(name, email, phone, message).then(result => {
 //         res.json('Email sent successfully', result)
 //     }).catch(error => res.json('failed to send email with token', {
 //         statusCode: 500,
@@ -123,10 +72,8 @@ app.post('/contact', (req, res, callback) => {
 //             'Access-Control-Allow-Origin': '*',
 //         },
 //         body: JSON.stringify(error),
-//     }));
-// }).catch((error) => {
-//     res.json('failed to get token', error);
-// });
+//     });
+
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
