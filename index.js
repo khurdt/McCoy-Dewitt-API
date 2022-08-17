@@ -1,13 +1,7 @@
 const express = require('express'),
-    morgan = require('morgan'),
     bodyParser = require('body-parser'),
-    methodOverride = require('method-override'),
-    mongoose = require('mongoose'),
-    Models = require('./models.js'),
-    passport = require('passport'),
-    path = require('path');
-
-const cors = require('cors');
+    path = require('path'),
+    cors = require('cors');
 
 // const { check, validationResult } = require('express-validator');
 /**
