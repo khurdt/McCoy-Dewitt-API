@@ -35,40 +35,37 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(bodyParser.json());
-
-var corsOptions = {
-    origin: 'http://localhost:3000',
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
 //this must come after the middleware bodyParser urlencoded
 
 /**
  * Cors is implemented here and in order to allow mulitple domains, the callback function is used. 
  * The domains listed are for locally hosted clients, the online React client, or the online Angular client.
  */
-// let allowedOrigins = [
-//     'https://kh-movie-app.herokuapp.com',
-//     'http://127.0.0.1:8080',
-//     'http://localhost:1234',
-//     'https://kh-cinema-app.netlify.app',
-//     'http://localhost:3000',
-//     'https://khurdt.github.io/movie-app-angular-client',
-//     'https://khurdt.github.io'
-// ];
+let allowedOrigins = [
+    'https://kh-movie-app.herokuapp.com',
+    'http://127.0.0.1:8080',
+    'http://localhost:1234',
+    'https://kh-cinema-app.netlify.app',
+    'http://localhost:3000',
+    'https://khurdt.github.io/movie-app-angular-client',
+    'https://khurdt.github.io'
+];
 
-// //implementing limits using CORS
-// app.use(cors({
-//     origin: (origin, callback) => {
-//         //if there is no incoming origin then remain available
-//         if (!origin) return callback(null, true);
-//         if (allowedOrigins.indexOf(origin) === -1) {
-//             //If the incoming origin isn't found on the list of allowed origins
-//             let message = 'The CORS policy for this application does not allow access from origin ' + origin;
-//             return callback(new Error(message), false);
-//         }
-//         return callback(null, true);
-//     }
-// }));
+//implementing limits using CORS
+app.use(cors({
+    origin: (origin, callback) => {
+        //if there is no incoming origin then remain available
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            //If the incoming origin isn't found on the list of allowed origins
+            let message = 'The CORS policy for this application does not allow access from origin ' + origin;
+            return callback(new Error(message), false);
+        }
+        return callback(null, true);
+    }
+}));
+
+app.options('*', cors())
 
 require('./auth')(app); //(app) at the end allows express to be used in auth.js
 
