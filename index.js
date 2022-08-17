@@ -102,14 +102,7 @@ app.get('/documentation.html', (req, res) => {
 */
 app.post('/contact', (req, res) => {
     const { name, email, phone, message } = req.body;
-    returnData(name, email, phone, message, (err, updatedUser) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error: ' + err);
-        } else {
-            res.json(name, email, phone, message);
-        }
-    });
+    res.json(name, email, phone, message);
 });
 
 //--------PUT or UPDATE--------------------------------------------------------------------------------
