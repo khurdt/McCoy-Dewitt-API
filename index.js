@@ -59,14 +59,16 @@ app.get('/', (req, res) => {
 app.post('/contact', (req, res) => {
     const { name, email, phone, message } = req.body;
 
-    responseBody = {
-        name: name,
-        email: email,
-        phone: phone,
-        message: message
-    }
+    res.json(name, email, phone, message);
 
-    res.json(responseBody);
+    // responseBody = {
+    //     name: name,
+    //     email: email,
+    //     phone: phone,
+    //     message: message
+    // }
+
+    // res.json(responseBody);
 
     // returnBody(name, email, phone, message, function (err, body) {
     //     if (err) {
