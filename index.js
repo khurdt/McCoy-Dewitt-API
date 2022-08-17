@@ -25,16 +25,22 @@ app.use(bodyParser.json());
 // app.use(cors(corsOptions));
 
 let allowedOrigins = [
-    'https://www.mccoydewitt.com',
-    'http://localhost:3000'
+    'https://kh-movie-app.herokuapp.com',
+    'http://127.0.0.1:8080',
+    'http://localhost:1234',
+    'https://kh-cinema-app.netlify.app',
+    'http://localhost:3000',
+    'https://khurdt.github.io/movie-app-angular-client',
+    'https://khurdt.github.io'
 ];
 
 //implementing limits using CORS
 app.use(cors({
     origin: (origin, callback) => {
+        //if there is no incoming origin then remain available
         if (!origin) return callback(null, true);
         if (allowedOrigins.indexOf(origin) === -1) {
-            //If a specific origin isn't found on the list of allowed origins
+            //If the incoming origin isn't found on the list of allowed origins
             let message = 'The CORS policy for this application does not allow access from origin ' + origin;
             return callback(new Error(message), false);
         }
