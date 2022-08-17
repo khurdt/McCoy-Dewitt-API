@@ -41,16 +41,24 @@ app.use(bodyParser.json());
  * Cors is implemented here and in order to allow mulitple domains, the callback function is used. 
  * The domains listed are for locally hosted clients, the online React client, or the online Angular client.
  */
-let allowlist = ['http://localhost:3000', 'https://www.mccoydewitt.com']
-let corsOptionsDelegate = function (req, callback) {
-    let corsOptions;
-    if (allowlist.indexOf(req.header('Origin')) !== -1) {
-        corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
-    } else {
-        corsOptions = { origin: false } // disable CORS for this request
+let allowedOrigins = [
+    'https://www.mccoydewitt.com',
+    'http://localhost:3000',
+];
+
+//implementing limits using CORS
+app.use(cors({
+    origin: (origin, callback) => {
+        //if there is no incoming origin then remain available
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            //If the incoming origin isn't found on the list of allowed origins
+            let message = 'The CORS policy for this application does not allow access from origin ' + origin;
+            return callback(new Error(message), false);
+        }
+        return callback(null, true);
     }
-    callback(null, corsOptions) // callback expects two parameters: error and options
-}
+}));
 
 require('./auth')(app); //(app) at the end allows express to be used in auth.js
 
@@ -87,7 +95,7 @@ app.get('/documentation.html', (req, res) => {
  * @param username
  * @param movieID
 */
-app.post('/contact', cors(corsOptionsDelegate), (req, res) => {
+app.post('/contact', (req, res) => {
     const { name, email, phone, message } = req.body;
 
     sendEmail(name, email, phone, message).then(result => {
