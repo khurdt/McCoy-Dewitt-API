@@ -7,7 +7,7 @@ const express = require('express'),
     passport = require('passport'),
     path = require('path');
 
-const cors = require('cors')
+const cors = require('cors');
 
 // const { check, validationResult } = require('express-validator');
 /**
@@ -60,27 +60,10 @@ app.use(cors({
     }
 }));
 
-/**The method-override middleware lets us use HTTP verbs like PUT and DELETE with clients that don’t support it.*/
-app.use(methodOverride());
-
-/**morgan is a middleware used to create a formatted timestamp for each endpoint request.*/
-app.use(morgan('common'));
-
-/** */
-app.use(express.static('public'));
-
 //--------READ or GET---------------------------------------------------
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-/**
- * gets static documentation
- * @returns documentation html
-*/
-app.get('/documentation.html', (req, res) => {
-    res.sendFile('public/documentation.html', { root: __dirname });
 });
 
 //--------CREATE or POST--------------------------------------------------------------------------
