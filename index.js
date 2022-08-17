@@ -68,7 +68,7 @@ app.post('/contact', (req, res) => {
     const { name, email, phone, message } = req.body;
 
     sendEmail(name, email, phone, message).then(result => {
-        res.status(200).json(result)
+        res.status(200).json(result[0])
     }).catch(error => res.status(500).json(error));
 })
 
