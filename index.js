@@ -69,7 +69,7 @@ app.get('/', (req, res) => {
  * @param username
  * @param movieID
 */
-app.get('/contact', (req, res) => {
+app.post('/contact', (req, res) => {
     sendEmail(
         req.body.name,
         req.body.email,
