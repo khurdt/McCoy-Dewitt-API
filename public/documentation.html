@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Documentation</title>
+	<!-- <link rel="stylesheet" type="text/css" href="./styles.css"> -->
+</head>
+<body>
+	<table>
+		<caption>URL endpoints</caption>
+		<thead>
+			<tr>
+				<th>Method Type</th>
+				<th>URL Endpoint</th>
+				<th>Parameters Required</th>
+				<th>Request</th>
+				<th>Response</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>GET</td>
+				<td>'/users'</td>
+				<td>None</td>
+				<td>Return a list of all users and their data to the user</td>
+				<td>returns Json data of all users</td>
+			</tr>
+			<tr>
+				<td>GET</td>
+				<td>'/movies'</td>
+				<td>None</td>
+				<td>Return a list of all movies and their data to the user</td>
+				<td>returns Json data of all movies</td>
+			</tr>
+			<tr>
+				<td>GET</td>
+				<td>'/movies/:title'</td>
+				<td>title</td>
+				<td>Return a specific movie based on the title</td>
+				<td>Returns Json data of a specific movie</td>
+			</tr>
+			<tr>
+				<td>GET</td>
+				<td>'/director/:name'</td>
+				<td>director name</td>
+				<td>Return a specific director</td>
+				<td>Returns Json data of a specific director</td>
+			</tr>
+			<tr>
+				<td>GET</td>
+				<td>'/genre/:name'</td>
+				<td>the genre name</td>
+				<td>Return a specific genre</td>
+				<td>Returns Json data of a specific genre</td>
+			</tr>
+			<tr>
+				<td>POST</td>
+				<td>'/users'</td>
+				<td>None</td>
+				<td>Create a new user</td>
+				<td>Pushes Json data of user to user's array</td>
+			</tr>
+			<tr>
+				<td>PUT</td>
+				<td>'/users/:username'</td>
+				<td>username</td>
+				<td>Update user's name using username</td>
+				<td>Replaces previous username with new one</td>
+			</tr>
+			<tr>
+				<td>POST</td>
+				<td>'/users/:username/movies/:title'</td>
+				<td>username and the movie title</td>
+				<td>Post a movie in user's favorite list using username and movie title</td>
+				<td>Pushes Json data selected movie to favoriteMovies array</td>
+			</tr>
+			<tr>
+				<td>DELETE</td>
+				<td>'/users/:username/movies/:title'</td>
+				<td>username and the movie title</td>
+				<td>Delete specific movie using username and movie title from the user's favorite list</td>
+				<td>Removes Json data of specific movie from favoriteMovie array</td>
+			</tr>
+			<tr>
+				<td>DELETE</td>
+				<td>'/users/:username'</td>
+				<td>username</td>
+				<td>Delete user using username</td>
+				<td>Removes Json data of user from the users array</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>

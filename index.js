@@ -1,22 +1,46 @@
 const express = require('express'),
-    cors = require('cors'),
-    methodOverride = require('method-override'),
     morgan = require('morgan'),
+    bodyParser = require('body-parser'),
+    methodOverride = require('method-override'),
+    mongoose = require('mongoose'),
+    Models = require('./models.js'),
     passport = require('passport'),
     path = require('path'),
-    bodyParser = require('body-parser'),
-    sendEmail = require('./mail'),
-    getToken = require('./mail'),
-    returnBody = require('./mail');
+    cors = require('cors');
 
+// const { check, validationResult } = require('express-validator');
+/**
+ * these are the schema models of movies and users imported from models.js
+ */
+// const Movies = Models.Movie;
+// const Users = Models.User;
+/**express will be used to create server endpoints and implement middleware */
 const app = express();
 
+
+/**
+ * this is how mongoose connects to mongo database server
+ */
+// mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect('mongodb://localhost:27017/movieDB', {useNewUrlParser: true, useUnifiedTopology: true});
+
+//------MiddleWare---------------------------------------------
+
+/**
+ * bodyParser middleware will automatically stringify request and response as they are sent
+ * between client, server, and database and then parse them as they are recieved.
+ */
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 
 app.use(bodyParser.json());
+//this must come after the middleware bodyParser urlencoded
 
+/**
+ * Cors is implemented here and in order to allow mulitple domains, the callback function is used. 
+ * The domains listed are for locally hosted clients, the online React client, or the online Angular client.
+ */
 let allowedOrigins = [
     'https://kh-movie-app.herokuapp.com',
     'http://127.0.0.1:8080',
@@ -41,49 +65,60 @@ app.use(cors({
     }
 }));
 
+require('./auth')(app); //(app) at the end allows express to be used in auth.js
+
+/**passport is a middleware used to authenticate jwt and to see if it has expired or not.*/
+require('./passport');
+
+/**The method-override middleware lets us use HTTP verbs like PUT and DELETE with clients that don’t support it.*/
 app.use(methodOverride());
 
+/**morgan is a middleware used to create a formatted timestamp for each endpoint request.*/
 app.use(morgan('common'));
+
+/** */
+app.use(express.static('public'));
+
+//--------READ or GET---------------------------------------------------
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.post('/contact', (req, res) => {
-    const { name, email, phone, message } = req.body;
-
-    res.json(name, email, phone, message);
-
-    // responseBody = {
-    //     name: name,
-    //     email: email,
-    //     phone: phone,
-    //     message: message
-    // }
-
-    // res.json(responseBody);
-
-    // returnBody(name, email, phone, message, function (err, body) {
-    //     if (err) {
-    //         res.json('error', err);
-    //     } else {
-    //         res.json('success', body)
-    //     }
-    // })
-
+/**
+ * gets static documentation
+ * @returns documentation html
+*/
+app.get('/documentation.html', (req, res) => {
+    res.sendFile('public/documentation.html', { root: __dirname });
 });
 
+//--------CREATE or POST--------------------------------------------------------------------------
 
-//     sendEmail(name, email, phone, message).then(result => {
-//         res.json('Email sent successfully', result)
-//     }).catch(error => res.json('failed to send email with token', {
-//         statusCode: 500,
-//         headers: {
-//             'Access-Control-Allow-Origin': '*',
-//         },
-//         body: JSON.stringify(error),
-//     });
+/**
+ * adds a movie id to favorite movie array in database
+ * @param username
+ * @param movieID
+*/
+app.post('/contact', (req, res) => {
+    const { name, email, phone, message } = req.body;
+    returnData(name, email, phone, message, (err, updatedUser) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        } else {
+            res.json(name, email, phone, message);
+        }
+    });
+});
 
+//--------PUT or UPDATE--------------------------------------------------------------------------------
+
+
+//--------DELETE-----------------------------------------------------------
+
+
+//--------Error Handler----------------------------------------------------
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
@@ -91,8 +126,9 @@ app.use((err, req, res, next) => {
     next();
 });
 
-const port = process.env.PORT || 8080;
+//--------END--------------------------------------------------------------
 
+const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0', () => {
-    console.log('listening on Port ' + port);
-})
+    console.log('Listening on Port ' + port);
+});
