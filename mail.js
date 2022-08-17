@@ -1,13 +1,12 @@
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
-const config = require('./config.js');
 const OAuth2 = google.auth.OAuth2
 
-const clientId = config.CLIENT_ID,
-  clientSecret = config.CLIENT_SECRET,
-  redirectUri = config.REDIRECT_URIS,
-  refreshToken = config.REFRESH_TOKEN,
-  clientEmail = config.EMAIL
+const clientId = CLIENT_ID,
+  clientSecret = CLIENT_SECRET,
+  redirectUri = REDIRECT_URIS,
+  refreshToken = REFRESH_TOKEN,
+  clientEmail = EMAIL
 
 const oAuth2Client = new OAuth2(clientId, clientSecret, redirectUri)
 oAuth2Client.setCredentials({ refresh_token: refreshToken });
