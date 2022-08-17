@@ -54,6 +54,7 @@ app.post('/contact', (req, res) => {
     }).catch((error) => {
         res.json('failed to get token', error);
     });
+    res.setHeader("Access-Control-Allow-Origin", "*")
 });
 
 app.use((err, req, res, next) => {
