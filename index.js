@@ -59,9 +59,6 @@ app.use(cors({
         return callback(null, true);
     }
 }));
-
-require('./auth')(app); //(app) at the end allows express to be used in auth.js
-
 /**passport is a middleware used to authenticate jwt and to see if it has expired or not.*/
 require('./passport');
 
