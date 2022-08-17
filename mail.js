@@ -1,16 +1,13 @@
-const path = require('path');
-require('dotenv').config({
-  path: path.resolve(__dirname, './.env')
-});
-
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
+const config = require('./config.js');
 const OAuth2 = google.auth.OAuth2
 
-const clientId = process.env.CLIENT_ID,
-  clientSecret = process.env.CLIENT_SECRET,
-  redirectUri = process.env.REDIRECT_URIS,
-  refreshToken = process.env.REFRESH_TOKEN
+const clientId = config.CLIENT_ID,
+  clientSecret = config.CLIENT_SECRET,
+  redirectUri = config.REDIRECT_URIS,
+  refreshToken = config.REFRESH_TOKEN,
+  clientEmail = config.EMAIL
 
 const oAuth2Client = new OAuth2(clientId, clientSecret, redirectUri)
 oAuth2Client.setCredentials({ refresh_token: refreshToken });
@@ -24,7 +21,7 @@ async function sendEmail(name, email, phone, message) {
       service: 'gmail',
       auth: {
         type: 'OAuth2',
-        user: process.env.EMAIL,
+        user: clientEmail,
         clientId: clientId,
         clientSecret: clientSecret,
         refreshToken: refreshToken,
@@ -33,8 +30,8 @@ async function sendEmail(name, email, phone, message) {
     });
 
     const mailOptions = {
-      from: process.env.EMAIL,
-      to: process.env.EMAIL,
+      from: clientEmail,
+      to: clientEmail,
       subject: `${name} contacted you from your website`,
       html: `
       <div style="textAlign:left;marginLeft:30px">

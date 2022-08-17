@@ -64,11 +64,11 @@ app.get('/', (req, res) => {
 
 //--------CREATE or POST--------------------------------------------------------------------------
 
-app.post('/contact', (req, res) => {
+app.post('/contact', (req, res, callback) => {
     const { name, email, phone, message } = req.body;
 
     sendEmail(name, email, phone, message).then(result => {
-        res.status(200).json(result[0])
+        res.status(200).json(result)
     }).catch(error => res.status(500).json(error));
 })
 
