@@ -59,8 +59,6 @@ app.use(cors({
         return callback(null, true);
     }
 }));
-/**passport is a middleware used to authenticate jwt and to see if it has expired or not.*/
-require('./passport');
 
 /**The method-override middleware lets us use HTTP verbs like PUT and DELETE with clients that don’t support it.*/
 app.use(methodOverride());
