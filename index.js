@@ -5,8 +5,9 @@ const express = require('express'),
     mongoose = require('mongoose'),
     Models = require('./models.js'),
     passport = require('passport'),
-    path = require('path'),
-    cors = require('cors');
+    path = require('path');
+
+const cors = require('cors')
 
 // const { check, validationResult } = require('express-validator');
 /**
@@ -16,8 +17,6 @@ const express = require('express'),
 // const Users = Models.User;
 /**express will be used to create server endpoints and implement middleware */
 const app = express();
-app.use(cors());
-
 
 /**
  * this is how mongoose connects to mongo database server
@@ -36,6 +35,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(bodyParser.json());
+app.use(cors());
 //this must come after the middleware bodyParser urlencoded
 
 /**
