@@ -1,0 +1,46 @@
+const mongoose = require('mongoose'),
+  bcrypt = require('bcrypt');
+
+/**schema for movies to be recieved or sent to database */
+let projectSchema = mongoose.Schema({
+  title: { type: String, required: true },
+  location: { type: String, required: true },
+  user: { type: String, required: true },
+  documents: [
+    {
+      title: String,
+      file: String
+    }
+  ],
+  comments: [
+    {
+      textID: Number,
+      user: String,
+      text: String
+    }
+  ]
+});
+
+/**schema for users to be recieved or sent to database */
+let userSchema = mongoose.Schema({
+  username: { type: String, required: true },
+  password: { type: String, required: true },
+  email: { type: String, required: true },
+  phone: Number,
+  projects: [{
+    type: mongoose.Schema.Types.ObjectID, ref: 'Project'
+  }]
+});
+
+userSchema.statics.hashPassword = (password) => {
+  return bcrypt.hashSync(password, 10);
+}
+
+userSchema.methods.validatePassword = function (password) {
+  return bcrypt.compareSync(password, this.password);
+}
+let Project = mongoose.model('Project', projectSchema);
+let User = mongoose.model('User', userSchema);
+
+module.exports.Project = Project;
+module.exports.User = User;
