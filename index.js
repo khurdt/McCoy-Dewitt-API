@@ -126,6 +126,8 @@ app.post('/contact', (req, res, callback) => {
  */
 app.post('/users',
     [
+        check('firstName', 'username contains non non-alphanumeric characters - not allowed').isAlphanumeric(),
+        check('lastName', 'username contains non non-alphanumeric characters - not allowed').isAlphanumeric(),
         check('username', 'username is required').isLength({ min: 5 }),
         check('username', 'username contains non non-alphanumeric characters - not allowed').isAlphanumeric(),
         check('password', 'password is required').not().isEmpty(),
@@ -142,6 +144,8 @@ app.post('/users',
                     return res.status(400).send(req.body.username + ' already exists');
                 } else {
                     Users.create({
+                        firstName: req.body.firstName,
+                        lastName: req.body.lastName,
                         username: req.body.username,
                         password: hashedPassword,
                         email: req.body.email,
@@ -213,6 +217,8 @@ app.put('/users/:username',
             {
                 $set:
                 {
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
                     username: req.body.username,
                     password: hashedPassword,
                     email: req.body.email,

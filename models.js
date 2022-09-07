@@ -6,6 +6,17 @@ let projectSchema = mongoose.Schema({
   title: { type: String, required: true },
   location: { type: String, required: true },
   user: { type: String, required: true },
+  insuranceClaim: {
+    using: Boolean,
+    claimNumber: Number,
+    dateOfDamage: Date,
+    dateOfInspection: Date
+  },
+  photos: [
+    {
+      title: String
+    }
+  ],
   documents: [
     {
       title: String,
@@ -23,6 +34,8 @@ let projectSchema = mongoose.Schema({
 
 /**schema for users to be recieved or sent to database */
 let userSchema = mongoose.Schema({
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
   username: { type: String, required: true },
   password: { type: String, required: true },
   email: { type: String, required: true },
