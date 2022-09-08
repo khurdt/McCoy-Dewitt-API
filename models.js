@@ -5,7 +5,9 @@ const mongoose = require('mongoose'),
 let projectSchema = mongoose.Schema({
   title: { type: String, required: true },
   location: { type: String, required: true },
-  user: { type: String, required: true },
+  users: [{
+    type: String
+  }],
   insuranceClaim: {
     using: Boolean,
     claimNumber: Number,
