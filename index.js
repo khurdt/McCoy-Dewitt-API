@@ -95,7 +95,7 @@ app.get('/projects', passport.authenticate('jwt', { session: false }), function 
 });
 
 app.get('/projects/:username', passport.authenticate('jwt', { session: false }), function (req, res) {
-    Projects.find({ users: [req.params.username] }).then((projects) => {
+    Projects.find({ users: req.params.username }).then((projects) => {
         res.status(200).json(projects);
     })
         .catch((err) => {
