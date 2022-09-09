@@ -171,7 +171,7 @@ app.post('/users',
                         username: req.body.username,
                         password: hashedPassword,
                         email: req.body.email,
-                        phone: req.body.phone
+                        phone: req.body.phone,
                     })
                         .then((user) => {
                             res.status(201).json(user)
@@ -244,7 +244,8 @@ app.put('/users/:username',
                     username: req.body.username,
                     password: hashedPassword,
                     email: req.body.email,
-                    phone: req.body.phone
+                    phone: req.body.phone,
+                    typeOfClient: req.body.typeOfClient
                 }
             },
             { new: true },// This line makes sure that the updated document is returned

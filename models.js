@@ -5,6 +5,10 @@ const mongoose = require('mongoose'),
 let projectSchema = mongoose.Schema({
   title: { type: String, required: true },
   location: { type: String, required: true },
+  status: {
+    title: String,
+    description: String
+  },
   users: [{
     type: String
   }],
@@ -42,9 +46,10 @@ let userSchema = mongoose.Schema({
   password: { type: String, required: true },
   email: { type: String, required: true },
   phone: String,
-  projects: [{
-    type: mongoose.Schema.Types.ObjectID, ref: 'Project'
-  }]
+  typeOfClient: {
+    company: Boolean,
+    title: String
+  }
 });
 
 userSchema.statics.hashPassword = (password) => {
