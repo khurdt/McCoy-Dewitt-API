@@ -172,6 +172,8 @@ app.post('/users',
                         password: hashedPassword,
                         email: req.body.email,
                         phone: req.body.phone,
+                        company: req.body.company,
+                        address: req.body.address
                     })
                         .then((user) => {
                             res.status(201).json(user)
@@ -243,7 +245,7 @@ app.put('/users/:username',
                     username: req.body.username,
                     email: req.body.email,
                     phone: req.body.phone,
-                    typeOfClient: req.body.typeOfClient,
+                    company: req.body.company,
                     address: req.body.address
                 }
             },
