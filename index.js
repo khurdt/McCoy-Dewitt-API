@@ -245,7 +245,8 @@ app.put('/users/:username',
                     password: hashedPassword,
                     email: req.body.email,
                     phone: req.body.phone,
-                    typeOfClient: req.body.typeOfClient
+                    typeOfClient: req.body.typeOfClient,
+                    address: req.body.address
                 }
             },
             { new: true },// This line makes sure that the updated document is returned
