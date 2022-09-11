@@ -234,7 +234,6 @@ app.put('/users/:username',
         if (!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array() });
         }
-        let hashedPassword = Users.hashPassword(req.body.password);
         Users.findOneAndUpdate({ username: req.params.username },
             {
                 $set:
@@ -242,7 +241,6 @@ app.put('/users/:username',
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
                     username: req.body.username,
-                    password: hashedPassword,
                     email: req.body.email,
                     phone: req.body.phone,
                     typeOfClient: req.body.typeOfClient,
