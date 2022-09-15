@@ -229,7 +229,6 @@ app.put('/users/:username',
         passport.authenticate('jwt', { session: false }),
         check('username', 'username is required').isLength({ min: 5 }),
         check('username', 'username contains non non-alphanumeric characters - not allowed').isAlphanumeric(),
-        check('password', 'password is required').not().isEmpty(),
         check('email', 'email does not appear to be valid').isEmail()
     ], (req, res) => {
         let errors = validationResult(req);
