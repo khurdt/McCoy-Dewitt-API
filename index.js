@@ -245,7 +245,8 @@ app.put('/users/:username',
                     email: req.body.email,
                     phone: req.body.phone,
                     company: req.body.company,
-                    address: req.body.address
+                    address: req.body.address,
+                    color: req.body.color
                 }
             },
             { new: true },// This line makes sure that the updated document is returned

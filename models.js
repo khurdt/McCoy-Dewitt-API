@@ -48,7 +48,8 @@ let userSchema = mongoose.Schema({
   email: { type: String, required: true },
   phone: String,
   company: String,
-  address: String
+  address: String,
+  color: String
 });
 
 userSchema.statics.hashPassword = (password) => {
