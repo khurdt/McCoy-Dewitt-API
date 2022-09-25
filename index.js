@@ -190,6 +190,22 @@ app.post('/users',
             })
     });
 
+app.post('/project', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Projects.create({
+        service: req.body.service,
+        description: req.body.description,
+        location: req.body.location,
+        users: req.body.users,
+        status: req.body.status
+    }).then((project) => {
+        res.status(201).json(project)
+    })
+        .catch((error) => {
+            console.error(error);
+            res.status(500).send('Error: ' + error);
+        })
+});
+
 /**
 * adds a movie id to favorite movie array in database
 * @param username
