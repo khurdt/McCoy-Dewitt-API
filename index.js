@@ -190,7 +190,7 @@ app.post('/users',
             })
     });
 
-app.post('/project', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.post('/projects', passport.authenticate('jwt', { session: false }), (req, res) => {
     Projects.create({
         service: req.body.service,
         description: req.body.description,
