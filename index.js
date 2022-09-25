@@ -207,14 +207,14 @@ app.post('/projects', passport.authenticate('jwt', { session: false }), (req, re
 });
 
 /**
-* adds a movie id to favorite movie array in database
+* adds username to project document
 * @param username
 * @param movieID
 */
 app.post('/users/:username/projects/:ProjectID', passport.authenticate('jwt', { session: false }), (req, res) => {
-    Users.findOneAndUpdate({ username: req.params.username },
+    Projects.findOneAndUpdate({ _id: req.params.ProjectID },
         {
-            $push: { projects: req.params.ProjectID }
+            $push: { users: req.params.username }
         },
         { new: true }, //This line makes sure that the updated document is returned
         (err, updatedUser) => {
@@ -282,9 +282,9 @@ app.put('/users/:username',
  * @param movieID
 */
 app.delete('/users/:username/projects/:ProjectID', passport.authenticate('jwt', { session: false }), (req, res) => {
-    Users.findOneAndUpdate({ username: req.params.username },
+    Projects.findOneAndUpdate({ _id: req.params.ProjectID },
         {
-            $pull: { projects: req.params.ProjectID }
+            $pull: { users: req.params.username }
         },
         { new: true }, //This line makes sure that the updated document is returned
         (err, updatedUser) => {
