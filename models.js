@@ -11,7 +11,7 @@ let projectSchema = mongoose.Schema({
     description: String
   },
   users: [{
-    username: String
+    type: String
   }],
   insuranceClaim: {
     using: Boolean,
