@@ -8,7 +8,8 @@ let projectSchema = mongoose.Schema({
   location: { type: String, required: true },
   status: {
     title: String,
-    description: String
+    description: String,
+    color: String
   },
   users: [{
     type: String
