@@ -94,7 +94,7 @@ app.get('/projects', passport.authenticate('jwt', { session: false }), function 
         })
 });
 
-app.get('/projects/:projectID', passport.authenticate('jwt', { session: false }), function (req, res) {
+app.get('/oneProject/:projectID', passport.authenticate('jwt', { session: false }), function (req, res) {
     Projects.findOne({ users: req.params.projectID }).then((project) => {
         res.status(200).json(project);
     })
