@@ -94,6 +94,16 @@ app.get('/projects', passport.authenticate('jwt', { session: false }), function 
         })
 });
 
+app.get('/projects/:projectID', passport.authenticate('jwt', { session: false }), function (req, res) {
+    Projects.findOne({ users: req.params.projectID }).then((project) => {
+        res.status(200).json(project);
+    })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('Error ' + err);
+        })
+});
+
 app.get('/projects/:username', passport.authenticate('jwt', { session: false }), function (req, res) {
     Projects.find({ users: req.params.username }).then((projects) => {
         res.status(200).json(projects);
@@ -211,10 +221,10 @@ app.post('/projects', passport.authenticate('jwt', { session: false }), (req, re
 * @param username
 * @param movieID
 */
-app.post('/users/:username/projects/:ProjectID', passport.authenticate('jwt', { session: false }), (req, res) => {
-    Projects.findOneAndUpdate({ _id: req.params.ProjectID },
+app.post('/files/:fileName/projects/:projectID', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Projects.findOneAndUpdate({ _id: req.params.projectID },
         {
-            $push: { users: req.params.username }
+            $push: { files: { fileName: req.params.fileName } }
         },
         { new: true }, //This line makes sure that the updated document is returned
         (err, updatedUser) => {

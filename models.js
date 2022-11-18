@@ -20,15 +20,9 @@ let projectSchema = mongoose.Schema({
     dateOfDamage: Date,
     dateOfInspection: Date
   },
-  photos: [
+  files: [
     {
-      title: String
-    }
-  ],
-  documents: [
-    {
-      title: String,
-      file: String
+      name: String
     }
   ],
   comments: [
