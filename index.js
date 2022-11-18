@@ -224,7 +224,7 @@ app.post('/projects', passport.authenticate('jwt', { session: false }), (req, re
 app.post('/files/:fileName/projects/:projectID', passport.authenticate('jwt', { session: false }), (req, res) => {
     Projects.findOneAndUpdate({ _id: req.params.projectID },
         {
-            $push: { files: { fileName: req.params.fileName } }
+            $push: { files: { name: req.params.fileName } }
         },
         { new: true }, //This line makes sure that the updated document is returned
         (err, updatedUser) => {
