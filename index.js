@@ -334,6 +334,22 @@ app.delete('/files/:fileName/projects/:projectID', passport.authenticate('jwt', 
 
 });
 
+app.delete('/users/:username/projects/:projectID', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Projects.findOneAndUpdate({ _id: req.params.projectID },
+        {
+            $pull: { users: req.params.username }
+        },
+        { new: true }, //This line makes sure that the updated document is returned
+        (err, updatedProject) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Error: ' + err);
+            } else {
+                res.json(updatedProject);
+            }
+        });
+});
+
 /**
  * deletes user from users collection
  * @param username
