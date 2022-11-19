@@ -212,6 +212,7 @@ app.post('/projects', passport.authenticate('jwt', { session: false }), (req, re
         service: req.body.service,
         description: req.body.description,
         location: req.body.location,
+        insuranceClaim: req.body.insuranceClaim,
         users: req.body.users,
         status: req.body.status
     }).then((project) => {
