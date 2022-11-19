@@ -329,7 +329,7 @@ app.delete('/files/:fileName/projects/:projectID', passport.authenticate('jwt', 
         })
     } catch (error) {
         console.log(error);
-        next(error);
+        res.status(500).send('Error: ' + err);
     }
 
 });
