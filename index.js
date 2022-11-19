@@ -7,7 +7,14 @@ const express = require('express'),
     sendEmail = require('./mail'),
     mongoose = require('mongoose'),
     Models = require('./models.js'),
-    passport = require('passport');
+    passport = require('passport'),
+    cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET
+});
 
 const { check, validationResult } = require('express-validator');
 
@@ -292,19 +299,28 @@ app.put('/users/:username',
  * @param movieID
 */
 app.delete('/files/:fileName/projects/:projectID', passport.authenticate('jwt', { session: false }), (req, res) => {
-    Projects.findOneAndUpdate({ _id: req.params.projectID },
-        {
-            $pull: { files: { name: req.params.fileName } }
-        },
-        { new: true }, //This line makes sure that the updated document is returned
-        (err, updatedUser) => {
-            if (err) {
-                console.error(err);
-                res.status(500).send('Error: ' + err);
-            } else {
-                res.json(updatedUser);
-            }
-        });
+    cloudinary.v2.uploader.destroy(req.params.fileName, function (error, result) {
+        console.log(result, error)
+    }).then(resp => {
+        console.log(resp);
+        Projects.findOneAndUpdate({ _id: req.params.projectID },
+            {
+                $pull: { files: { name: req.params.fileName } }
+            },
+            { new: true }, //This line makes sure that the updated document is returned
+            (err, updatedUser) => {
+                if (err) {
+                    console.error(err);
+                    res.status(500).send('Error: ' + err);
+                } else {
+                    res.json(updatedUser);
+                }
+            });
+    }).catch(function (err) {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+    });
+
 });
 
 /**
