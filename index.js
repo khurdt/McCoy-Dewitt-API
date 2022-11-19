@@ -291,10 +291,10 @@ app.put('/users/:username',
  * @param username
  * @param movieID
 */
-app.delete('/users/:username/projects/:ProjectID', passport.authenticate('jwt', { session: false }), (req, res) => {
-    Projects.findOneAndUpdate({ _id: req.params.ProjectID },
+app.delete('/files/:fileName/projects/:projectID', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Projects.findOneAndUpdate({ _id: req.params.projectID },
         {
-            $pull: { users: req.params.username }
+            $pull: { files: { name: req.params.fileName } }
         },
         { new: true }, //This line makes sure that the updated document is returned
         (err, updatedUser) => {
