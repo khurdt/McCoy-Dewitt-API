@@ -8,7 +8,7 @@ const express = require('express'),
     mongoose = require('mongoose'),
     Models = require('./models.js'),
     passport = require('passport'),
-    cloudinary = require('cloudinary').v2;
+    cloudinary = require('cloudinary');
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -298,28 +298,39 @@ app.put('/users/:username',
  * @param username
  * @param movieID
 */
-app.delete('/files/:fileName/projects/:projectID', passport.authenticate('jwt', { session: false }), (req, res) => {
-    cloudinary.v2.uploader.destroy(req.params.fileName, function (error, result) {
-        console.log(result, error)
-    }).then(resp => {
-        console.log(resp);
-        Projects.findOneAndUpdate({ _id: req.params.projectID },
+app.delete('/files/:fileName/projects/:projectID', passport.authenticate('jwt', { session: false }), async (req, res) => {
+
+    try {
+        await cloudinary.v2.uploader.destroy(req.params.fileName);
+        //     function (error, result) {
+        //     console.log(result, error)
+        // }).then(resp => {
+        //     console.log(resp);
+        // }).catch(function (err) {
+        //     console.error(err);
+        //     res.status(500).send('Error: ' + err);
+        // });
+        const removeFile = await Projects.findOneAndUpdate({ _id: req.params.projectID },
             {
                 $pull: { files: { name: req.params.fileName } }
             },
-            { new: true }, //This line makes sure that the updated document is returned
-            (err, updatedUser) => {
-                if (err) {
-                    console.error(err);
-                    res.status(500).send('Error: ' + err);
-                } else {
-                    res.json(updatedUser);
-                }
-            });
-    }).catch(function (err) {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
-    });
+            { new: true }); //This line makes sure that the updated document is returned
+        // (err, updatedUser) => {
+        //     if (err) {
+        //         console.error(err);
+        //         res.status(500).send('Error: ' + err);
+        //     } else {
+        //         res.json(updatedUser);
+        //     }
+        // });
+        res.status(201).json({
+            success: true,
+            message: 'file deleted'
+        })
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
 
 });
 
