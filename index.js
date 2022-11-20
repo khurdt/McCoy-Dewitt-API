@@ -101,8 +101,8 @@ app.get('/projects', passport.authenticate('jwt', { session: false }), function 
         })
 });
 
-app.get('/oneProject/:projectID', passport.authenticate('jwt', { session: false }), function (req, res) {
-    Projects.findOne({ _id: req.params.projectID }).then((project) => {
+app.get('/oneProject/:projectId', passport.authenticate('jwt', { session: false }), function (req, res) {
+    Projects.findOne({ _id: req.params.projectId }).then((project) => {
         res.status(200).json(project);
     })
         .catch((err) => {
@@ -224,13 +224,29 @@ app.post('/projects', passport.authenticate('jwt', { session: false }), (req, re
         })
 });
 
+app.post('/users/:username/projects/projectId}', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Projects.findOneAndUpdate({ _id: req.params.projectId },
+        {
+            $push: { users: req.params.username }
+        },
+        { new: true }, //This line makes sure that the updated document is returned
+        (err, updatedProject) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Error: ' + err);
+            } else {
+                res.json(updatedProject);
+            }
+        });
+});
+
 /**
 * adds username to project document
 * @param username
 * @param movieID
 */
-app.post('/files/:fileName/projects/:projectID', passport.authenticate('jwt', { session: false }), (req, res) => {
-    Projects.findOneAndUpdate({ _id: req.params.projectID },
+app.post('/files/:fileName/projects/:projectId', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Projects.findOneAndUpdate({ _id: req.params.projectId },
         {
             $push: { files: { name: req.params.fileName } }
         },
@@ -246,6 +262,30 @@ app.post('/files/:fileName/projects/:projectID', passport.authenticate('jwt', { 
 });
 
 //--------PUT or UPDATE--------------------------------------------------------------------------------
+
+app.put('/projects/projectId', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Projects.findOneAndUpdate({ _id: req.params.projectId },
+        {
+            $set:
+            {
+                description: req.body.description,
+                location: req.body.location,
+                insuranceClaim: req.body.insuranceClaim,
+                users: req.body.users,
+                status: req.body.status
+            }
+        },
+        { new: true },
+        (err, updatedProject) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Error: ' + err);
+            } else {
+                res.json(updatedProject);
+            }
+        });
+});
+
 
 /**
  * changes user's info and new password is hashed
@@ -299,7 +339,7 @@ app.put('/users/:username',
  * @param username
  * @param movieID
 */
-app.delete('/files/:fileName/projects/:projectID', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.delete('/files/:fileName/projects/:projectId', passport.authenticate('jwt', { session: false }), async (req, res) => {
 
     try {
         await cloudinary.v2.uploader.destroy(req.params.fileName);
@@ -311,7 +351,7 @@ app.delete('/files/:fileName/projects/:projectID', passport.authenticate('jwt', 
         //     console.error(err);
         //     res.status(500).send('Error: ' + err);
         // });
-        const removeFile = await Projects.findOneAndUpdate({ _id: req.params.projectID },
+        const removeFile = await Projects.findOneAndUpdate({ _id: req.params.projectId },
             {
                 $pull: { files: { name: req.params.fileName } }
             },
@@ -335,8 +375,8 @@ app.delete('/files/:fileName/projects/:projectID', passport.authenticate('jwt', 
 
 });
 
-app.delete('/users/:username/projects/:projectID', passport.authenticate('jwt', { session: false }), (req, res) => {
-    Projects.findOneAndUpdate({ _id: req.params.projectID },
+app.delete('/users/:username/projects/:projectId', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Projects.findOneAndUpdate({ _id: req.params.projectId },
         {
             $pull: { users: req.params.username }
         },
