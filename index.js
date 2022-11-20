@@ -224,7 +224,7 @@ app.post('/projects', passport.authenticate('jwt', { session: false }), (req, re
         })
 });
 
-app.post('/users/:username/projects/projectId}', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.post('/users/:username/projects/:projectId}', passport.authenticate('jwt', { session: false }), (req, res) => {
     Projects.findOneAndUpdate({ _id: req.params.projectId },
         {
             $push: { users: req.params.username }
@@ -343,27 +343,13 @@ app.delete('/files/:fileName/projects/:projectId', passport.authenticate('jwt', 
 
     try {
         await cloudinary.v2.uploader.destroy(req.params.fileName);
-        //     function (error, result) {
-        //     console.log(result, error)
-        // }).then(resp => {
-        //     console.log(resp);
-        // }).catch(function (err) {
-        //     console.error(err);
-        //     res.status(500).send('Error: ' + err);
-        // });
+
         const removeFile = await Projects.findOneAndUpdate({ _id: req.params.projectId },
             {
                 $pull: { files: { name: req.params.fileName } }
             },
             { new: true }); //This line makes sure that the updated document is returned
-        // (err, updatedUser) => {
-        //     if (err) {
-        //         console.error(err);
-        //         res.status(500).send('Error: ' + err);
-        //     } else {
-        //         res.json(updatedUser);
-        //     }
-        // });
+
         res.status(201).json({
             success: true,
             message: 'file deleted'
