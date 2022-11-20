@@ -224,7 +224,7 @@ app.post('/projects', passport.authenticate('jwt', { session: false }), (req, re
         })
 });
 
-app.post('/users/:username/projects/:projectId}', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.post('/users/:username/projects/:projectId', passport.authenticate('jwt', { session: false }), (req, res) => {
     Projects.findOneAndUpdate({ _id: req.params.projectId },
         {
             $push: { users: req.params.username }
