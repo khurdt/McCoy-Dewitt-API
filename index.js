@@ -271,7 +271,8 @@ app.put('/projects/projectId', passport.authenticate('jwt', { session: false }),
                 description: req.body.description,
                 location: req.body.location,
                 insuranceClaim: req.body.insuranceClaim,
-                status: req.body.status
+                status: req.body.status,
+                users: req.body.users,
             }
         },
         { new: true },
