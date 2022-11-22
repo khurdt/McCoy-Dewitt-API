@@ -263,7 +263,7 @@ app.post('/files/:fileName/projects/:projectId', passport.authenticate('jwt', { 
 
 //--------PUT or UPDATE--------------------------------------------------------------------------------
 
-app.put('/projects/projectId', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.put('/projects/:projectId', passport.authenticate('jwt', { session: false }), (req, res) => {
     Projects.findOneAndUpdate({ _id: req.params.projectId },
         {
             $set:
