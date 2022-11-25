@@ -377,6 +377,20 @@ app.delete('/users/:username/projects/:projectId', passport.authenticate('jwt', 
         });
 });
 
+app.delete('/projects/:projectId', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Projects.findOneAndRemove({ _id: req.params.projectId })
+        .then((project) => {
+            if (!project) {
+                res.status(400).send(req.params.projectId + ' was not found');
+            } else {
+                res.status(200).send(req.params.projectId + ' was deleted');
+            }
+        }).catch((err) => {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        });
+})
+
 /**
  * deletes user from users collection
  * @param username
