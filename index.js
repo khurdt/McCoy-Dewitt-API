@@ -173,18 +173,18 @@ app.post('/password-reset/:email', (req, res) => {
                     sendPasswordReset(req.params.email, hashedString, user._id).then(result => {
                         res.status(200).json(result)
                     }).catch((error) => {
-                        res.status(500).json({ message: 'failed to send email' });
+                        res.status(500).json({ message: 'failed to send email', error: error });
                     });
                 }).catch((error) => {
-                    res.status(500).json({ message: 'failed to create new password reset' });
+                    res.status(500).json({ message: 'failed to create new password reset', error: error });
                 });
             }).catch((error) => {
-                res.status(500).json({ message: 'failed to delete old password reset' });
+                res.status(500).json({ message: 'failed to delete old password reset', error: error });
             })
         }
     }).catch((error) => {
         console.log(error);
-        res.status(500).json({ message: 'failed to send password reset' })
+        res.status(500).json({ message: 'failed to send password reset', error: error })
     })
 });
 
