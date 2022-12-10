@@ -327,8 +327,8 @@ app.put('/projects/:projectId', passport.authenticate('jwt', { session: false })
 app.put('/password-reset', (req, res) => {
     const { resetString, password, id } = req.body;
 
-    PasswordReset.find({ userId: id }).then((user) => {
-        if (user && PasswordReset.validateResetString(resetString)) {
+    PasswordReset.find({ userId: id.toString() }).then((user) => {
+        if (user._id && PasswordReset.validateResetString(resetString)) {
             let hashedPassword = Users.hashPassword(password);
             Users.findOneAndUpdate({ _id: id },
                 {
