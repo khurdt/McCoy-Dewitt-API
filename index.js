@@ -327,31 +327,31 @@ app.put('/projects/:projectId', passport.authenticate('jwt', { session: false })
 app.put('/password-reset', (req, res) => {
 
     PasswordReset.findOne({ userId: req.body.id }).then((user) => {
-        if (user) {
-            // if (PasswordReset.validateResetString(req.body.resetString)) {
-            let hashedPassword = Users.hashPassword(req.body.password);
-            Users.findOneAndUpdate({ _id: parseInt(req.body.id) },
+        // if (user) {
+        // if (PasswordReset.validateResetString(req.body.resetString)) {
+        let hashedPassword = Users.hashPassword(req.body.password);
+        Users.findOneAndUpdate({ _id: parseInt(req.body.id) },
+            {
+                $set:
                 {
-                    $set:
-                    {
-                        password: hashedPassword
-                    }
-                },
-                { new: true },// This line makes sure that the updated document is returned
-                (err, updatedUser) => {
-                    if (err) {
-                        console.error(err);
-                        res.status(500).send({ message: 'failed to update', err: err });
-                    } else {
-                        res.status(200).json(updatedUser);
-                    }
-                });
-            // } else {
-            //     res.status(500).json({ message: `reset string is not valid` });
-            // }
-        } else {
-            res.status(500).json({ message: `did not find correct id` });
-        }
+                    password: hashedPassword
+                }
+            },
+            { new: true },// This line makes sure that the updated document is returned
+            (err, updatedUser) => {
+                if (err) {
+                    console.error(err);
+                    res.status(500).send({ message: 'failed to update', err: err });
+                } else {
+                    res.status(200).json(updatedUser);
+                }
+            });
+        // } else {
+        //     res.status(500).json({ message: `reset string is not valid` });
+        // }
+        // } else {
+        //     res.status(500).json({ message: `did not find correct id` });
+        // }
     }).catch((error) => {
         res.status(500).json(error);
     })
