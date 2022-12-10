@@ -6,7 +6,8 @@ const clientId = process.env.CLIENT_ID,
   clientSecret = process.env.CLIENT_SECRET,
   redirectUri = process.env.REDIRECT_URIS,
   refreshToken = process.env.REFRESH_TOKEN,
-  clientEmail = process.env.EMAIL
+  clientEmail = process.env.EMAIL, 
+  passwordResetUrl = process.env.RESET_PASSWORD_URL
 
 const oAuth2Client = new OAuth2(clientId, clientSecret, redirectUri)
 oAuth2Client.setCredentials({ refresh_token: refreshToken });
@@ -37,6 +38,46 @@ async function sendEmail(name, email, phone, message) {
       <p>${message}</p>
       <p>email: ${email}</p>
       <p>phone: ${phone}</p>
+      </div>`
+    };
+
+    let result = await transport.sendMail(mailOptions);
+
+    return result;
+
+  } catch (error) {
+
+    return error;
+  }
+}
+
+async function sendPasswordReset(email, resetString, _id) {
+
+  accessToken = await oAuth2Client.getAccessToken();
+
+  try {
+    const transport = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user: clientEmail,
+        clientId: clientId,
+        clientSecret: clientSecret,
+        refreshToken: refreshToken,
+        accessToken: accessToken
+      }
+    });
+
+    const mailOptions = {
+      from: clientEmail,
+      to: email,
+      subject: `McCoy DeWitt LLC: Password Reset`,
+      html: `
+      <div style="textAlign:left;marginLeft:30px">
+      <p>You requested to reset your password at ${date}</p>
+      <p>Click the link below to reset your password</p>
+      <a href=${passwordResetUrl + '/' + _id + '/' + resetString}>
+      reset password</a>
       </div>`
     };
 

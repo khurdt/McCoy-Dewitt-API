@@ -47,6 +47,13 @@ let userSchema = mongoose.Schema({
   color: String
 });
 
+let PasswordResetSchema = new Schema({
+  userId: String,
+  resetString: String,
+  createdAt: Date,
+  expiresAt: Date
+});
+
 userSchema.statics.hashPassword = (password) => {
   return bcrypt.hashSync(password, 10);
 }
@@ -54,8 +61,23 @@ userSchema.statics.hashPassword = (password) => {
 userSchema.methods.validatePassword = function (password) {
   return bcrypt.compareSync(password, this.password);
 }
+
+userSchema.methods.validateUser = function (username) {
+  return compareSync(username, this.username);
+}
+
+PasswordResetSchema.methods.hashResetString = function (resetString) {
+  return bcrypt.hashSync(resetString, 10);
+}
+
+PasswordResetSchema.validateResetString = function (resetString) {
+  return bcrypt.compareSync(resetString, this.resetString);
+}
+
 let Project = mongoose.model('Project', projectSchema);
 let User = mongoose.model('User', userSchema);
+let PasswordReset = mongoose.model('PasswordReset', PasswordResetSchema);
 
 module.exports.Project = Project;
 module.exports.User = User;
+module.exports.PasswordReset = PasswordReset;
