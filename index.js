@@ -328,9 +328,7 @@ app.put('/password-reset', (req, res) => {
     const { resetString, password, id } = req.body;
 
     PasswordReset.find({ userId: id }).then((user) => {
-        if (!user) {
-            res.status(500).json(`invalid password reset request`);
-        } else if (PasswordReset.validateResetString(resetString)) {
+        if (user && PasswordReset.validateResetString(resetString)) {
             let hashedPassword = Users.hashPassword(password);
             Users.findOneAndUpdate({ _id: id },
                 {
