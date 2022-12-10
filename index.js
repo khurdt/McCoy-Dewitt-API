@@ -325,12 +325,13 @@ app.put('/projects/:projectId', passport.authenticate('jwt', { session: false })
 });
 
 app.put('/password-reset', (req, res) => {
+    const objectId = mongoose.Types.ObjectId(req.body.id);
 
     PasswordReset.findOne({ userId: req.body.id }).then((user) => {
         // if (user) {
         // if (PasswordReset.validateResetString(req.body.resetString)) {
         let hashedPassword = Users.hashPassword(req.body.password);
-        Users.findOneAndUpdate({ _id: parseInt(req.body.id) },
+        Users.findOneAndUpdate({ _id: objectId },
             {
                 $set:
                 {
