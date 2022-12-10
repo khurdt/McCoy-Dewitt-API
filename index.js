@@ -156,7 +156,7 @@ app.post('/contact', (req, res, callback) => {
 });
 
 app.post('/password-reset/:email', (req, res) => {
-    Users.find({ email: req.params.email })
+    Users.findOne({ email: req.params.email })
         .then((user) => {
             if (!user) {
                 res.status(500).json({ message: 'account does not exist' })
