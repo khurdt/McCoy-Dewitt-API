@@ -330,22 +330,23 @@ app.put('/password-reset', (req, res) => {
         if (user) {
             if (PasswordReset.validateResetString(req.body.resetString)) {
                 let hashedPassword = Users.hashPassword(req.body.password);
-                Users.findOneAndUpdate({ _id: parseInt(req.body.id) },
-                    {
-                        $set:
-                        {
-                            password: hashedPassword
-                        }
-                    },
-                    { new: true },// This line makes sure that the updated document is returned
-                    (err, updatedUser) => {
-                        if (err) {
-                            console.error(err);
-                            res.status(500).send({ message: 'failed to update', err: err });
-                        } else {
-                            res.status(200).json(updatedUser);
-                        }
-                    });
+                res.status(200).json({ hashedPassword: hashedPassword })
+                // Users.findOneAndUpdate({ _id: parseInt(req.body.id) },
+                //     {
+                //         $set:
+                //         {
+                //             password: hashedPassword
+                //         }
+                //     },
+                //     { new: true },// This line makes sure that the updated document is returned
+                //     (err, updatedUser) => {
+                //         if (err) {
+                //             console.error(err);
+                //             res.status(500).send({ message: 'failed to update', err: err });
+                //         } else {
+                //             res.status(200).json(updatedUser);
+                //         }
+                //     });
             } else {
                 res.status(500).json({ message: `reset string is not valid` });
             }
