@@ -325,34 +325,33 @@ app.put('/projects/:projectId', passport.authenticate('jwt', { session: false })
 });
 
 app.put('/password-reset', (req, res) => {
-    const { resetString, password, id } = req.body;
 
-    // PasswordReset.findOne({ userId: id }).then((user) => {
-    // if (user && PasswordReset.validateResetString(resetString)) {
-    res.status(200).json(resetString, password, id);
-    // let hashedPassword = Users.hashPassword(password);
-    // Users.findOneAndUpdate({ _id: id },
-    //     {
-    //         $set:
-    //         {
-    //             password: hashedPassword
-    //         }
-    //     },
-    //     { new: true },// This line makes sure that the updated document is returned
-    //     (err, updatedUser) => {
-    //         if (err) {
-    //             console.error(err);
-    //             res.status(500).send('Error: ' + err);
-    //         } else {
-    //             res.json(updatedUser);
-    //         }
-    //     });
-    // } else {
-    //     res.status(500).json(`reset code is not valid`);
-    // }
-    // }).catch((error) => {
-    //     res.status(500).json(error);
-    // })
+    PasswordReset.findOne({ userId: req.body.id }).then((user) => {
+        // if (user && PasswordReset.validateResetString(resetString)) {
+        res.status(200).json(req.body.resetString, req.body.password, req.body.id, user);
+        // let hashedPassword = Users.hashPassword(password);
+        // Users.findOneAndUpdate({ _id: id },
+        //     {
+        //         $set:
+        //         {
+        //             password: hashedPassword
+        //         }
+        //     },
+        //     { new: true },// This line makes sure that the updated document is returned
+        //     (err, updatedUser) => {
+        //         if (err) {
+        //             console.error(err);
+        //             res.status(500).send('Error: ' + err);
+        //         } else {
+        //             res.json(updatedUser);
+        //         }
+        //     });
+        // } else {
+        //     res.status(500).json(`reset code is not valid`);
+        // }
+    }).catch((error) => {
+        res.status(500).json(error);
+    })
 });
 
 
