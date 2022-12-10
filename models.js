@@ -62,15 +62,11 @@ userSchema.methods.validatePassword = function (password) {
   return bcrypt.compareSync(password, this.password);
 }
 
-userSchema.methods.validateUser = function (username) {
-  return compareSync(username, this.username);
-}
-
-passwordResetSchema.methods.hashPassword = function (resetString) {
+passwordResetSchema.statics.hashResetString = function (resetString) {
   return bcrypt.hashSync(resetString, 10);
 }
 
-passwordResetSchema.methods.validatePassword = function (resetString) {
+passwordResetSchema.methods.validateResetString = function (resetString) {
   return bcrypt.compareSync(resetString, this.resetString);
 }
 

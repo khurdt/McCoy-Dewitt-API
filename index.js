@@ -159,8 +159,8 @@ app.post('/password-reset/:email', (req, res) => {
     Users.findOne({ email: req.params.email })
         .then((user) => {
             if (user._id) {
-                res.status(200).json(user._id);
-                let hashedString = PasswordReset.hashPassword(uuidv4() + user._id);
+                const resetString = (uuidv4() + user._id);
+                let hashedString = PasswordReset.hashResetString(resetString);
                 PasswordReset.deleteMany({ userId: user._id }).then((result) => {
                     PasswordReset.create({
                         userId: user._id,
