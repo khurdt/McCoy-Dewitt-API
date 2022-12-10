@@ -159,7 +159,7 @@ app.post('/password-reset', (req, res) => {
     Users.find({ email: req.body.email })
         .then((user) => {
             if (!user) {
-                res.status(500).json('account does not exist')
+                res.status(500).json({ message: 'account does not exist' })
             } else {
                 const resetString = (uuidv4() + user._id);
                 let hashedString = PasswordReset.hashResetString(resetString);
@@ -174,13 +174,13 @@ app.post('/password-reset', (req, res) => {
                         sendPasswordReset(req.body.email, hashedString, user._id).then(result => {
                             res.status(200).json(result)
                         }).catch((error) => {
-                            res.status(500).json(error);
+                            res.status(500).json(error, { message: 'failed to send email' });
                         });
                     }).catch((error) => {
-                        res.status(500).json(error);
+                        res.status(500).json(error, { message: 'failed to create new password reset' });
                     });
                 }).catch((error) => {
-                    res.status(500).json(error);
+                    res.status(500).json(error, { message: 'failed to delete old password reset' });
                 })
             }
         }).catch((error) => {
