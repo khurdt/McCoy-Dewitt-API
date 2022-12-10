@@ -155,8 +155,8 @@ app.post('/contact', (req, res, callback) => {
     }).catch(error => res.status(500).json(error));
 });
 
-app.post('/password-reset', (req, res) => {
-    Users.find({ email: req.body.email })
+app.post('/password-reset/:email', (req, res) => {
+    Users.find({ email: req.params.email })
         .then((user) => {
             if (!user) {
                 res.status(500).json({ message: 'account does not exist' })
@@ -171,7 +171,7 @@ app.post('/password-reset', (req, res) => {
                         createdAt: new Date(),
                         expiresAt: new Date() + 3600000
                     }).then(() => {
-                        sendPasswordReset(req.body.email, hashedString, user._id).then(result => {
+                        sendPasswordReset(req.params.email, hashedString, user._id).then(result => {
                             res.status(200).json(result)
                         }).catch((error) => {
                             res.status(500).json(error, { message: 'failed to send email' });
@@ -185,7 +185,7 @@ app.post('/password-reset', (req, res) => {
             }
         }).catch((error) => {
             console.log(error);
-            res.status(500).json('failed to send password reset')
+            res.status(500).json(error, { message: 'failed to send password reset' })
         })
 });
 
