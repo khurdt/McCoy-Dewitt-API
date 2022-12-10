@@ -156,37 +156,45 @@ app.post('/contact', (req, res, callback) => {
 });
 
 app.post('/password-reset/:email', (req, res) => {
-    Users.findOne({ email: req.params.email }).then((user) => {
-        if (!user) {
-            res.status(500).json({ message: 'account does not exist' })
-        } else {
-            const resetString = (uuidv4() + user._id);
-            let hashedString = PasswordReset.hashResetString(resetString);
-            res.status(200).json({ user: user, hashedString: hashedString });
+    Users.findOne({ email: req.params.email })
+        .then((user) => {
+            res.status(201).json(user);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('Error ' + err);
+        })
+    // Users.findOne({ email: req.params.email }).then((user) => {
+    //     if (!user) {
+    //         res.status(500).json({ message: 'account does not exist' })
+    //     } else {
+    //         const resetString = (uuidv4() + user._id);
+    //         let hashedString = PasswordReset.hashResetString(resetString);
+    //         res.status(200).json({ user: user, hashedString: hashedString });
 
-            // PasswordReset.deleteMany({ userId: user._id }).then((result) => {
-            //     PasswordReset.create({
-            //         userId: user._id,
-            //         resetString: hashedString,
-            //         createdAt: new Date(),
-            //         expiresAt: new Date() + 3600000
-            //     }).then(() => {
-            //         sendPasswordReset(req.params.email, hashedString, user._id).then(result => {
-            //             res.status(200).json(result)
-            //         }).catch((error) => {
-            //             res.status(500).json({ message: 'failed to send email', error: error });
-            //         });
-            //     }).catch((error) => {
-            //         res.status(500).json({ message: 'failed to create new password reset', error: error });
-            //     });
-            // }).catch((error) => {
-            //     res.status(500).json({ message: 'failed to delete old password reset', error: error });
-            // })
-        }
-    }).catch((error) => {
-        console.log(error);
-        res.status(500).json({ message: 'failed to send password reset', error: error })
-    })
+    // PasswordReset.deleteMany({ userId: user._id }).then((result) => {
+    //     PasswordReset.create({
+    //         userId: user._id,
+    //         resetString: hashedString,
+    //         createdAt: new Date(),
+    //         expiresAt: new Date() + 3600000
+    //     }).then(() => {
+    //         sendPasswordReset(req.params.email, hashedString, user._id).then(result => {
+    //             res.status(200).json(result)
+    //         }).catch((error) => {
+    //             res.status(500).json({ message: 'failed to send email', error: error });
+    //         });
+    //     }).catch((error) => {
+    //         res.status(500).json({ message: 'failed to create new password reset', error: error });
+    //     });
+    // }).catch((error) => {
+    //     res.status(500).json({ message: 'failed to delete old password reset', error: error });
+    // })
+    // }
+    //     }).catch((error) => {
+    //     console.log(error);
+    //     res.status(500).json({ message: 'failed to send password reset', error: error })
+    // })
 });
 
 
