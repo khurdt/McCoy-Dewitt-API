@@ -47,7 +47,7 @@ let userSchema = mongoose.Schema({
   color: String
 });
 
-let PasswordResetSchema = new Schema({
+let PasswordResetSchema = mongoose.Schema({
   userId: String,
   resetString: String,
   createdAt: Date,

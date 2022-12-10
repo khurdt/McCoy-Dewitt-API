@@ -156,37 +156,37 @@ app.post('/contact', (req, res, callback) => {
 });
 
 app.post('/password-reset', (req, res) => {
-    Users.find({email: req.body.email})
-    .then((user) => {
-        if (!user) {
-            res.status(500).json('account does not exist')
-        }else {
-            const resetString = (uuidv4(); + user._id);
-            let hashedString = PasswordReset.hashResetString(resetString);
+    Users.find({ email: req.body.email })
+        .then((user) => {
+            if (!user) {
+                res.status(500).json('account does not exist')
+            } else {
+                const resetString = (uuidv4() + user._id);
+                let hashedString = PasswordReset.hashResetString(resetString);
 
-            PasswordReset.deleteMany({userId: user._id}).then((result) => {
-                PasswordReset.create({
-                    userId: user._id,
-                    resetString: hashedString,
-                    createdAt: new Date(),
-                    expiresAt: new Date() + 3600000
-                }).then(() => {
-                    sendPasswordReset(req.body.email, hashedString, user._id).then(result => {
-                        res.status(200).json(result)
+                PasswordReset.deleteMany({ userId: user._id }).then((result) => {
+                    PasswordReset.create({
+                        userId: user._id,
+                        resetString: hashedString,
+                        createdAt: new Date(),
+                        expiresAt: new Date() + 3600000
+                    }).then(() => {
+                        sendPasswordReset(req.body.email, hashedString, user._id).then(result => {
+                            res.status(200).json(result)
+                        }).catch((error) => {
+                            res.status(500).json(error);
+                        });
                     }).catch((error) => {
                         res.status(500).json(error);
                     });
                 }).catch((error) => {
                     res.status(500).json(error);
-                });
-            }).catch((error) => {
-                res.status(500).json(error);
-            })
-        }
-    }).catch((error) => {
-        console.log(error);
-        res.status(500).json('failed to send password reset')
-    })
+                })
+            }
+        }).catch((error) => {
+            console.log(error);
+            res.status(500).json('failed to send password reset')
+        })
 });
 
 
@@ -325,35 +325,35 @@ app.put('/projects/:projectId', passport.authenticate('jwt', { session: false })
 });
 
 app.put('/password-reset', (req, res) => {
-    const {resetString, password, id} = req.body;
+    const { resetString, password, id } = req.body;
 
-            PasswordReset.find({ userId: id }).then((user) => {
-                if(!user) {
-                    res.status(500).json(`invalid password reset request`);
-                }else if (PasswordReset.validateResetString(resetString)) {
-                let hashedPassword = Users.hashPassword(password);
-                Users.findOneAndUpdate({ _id: id },
+    PasswordReset.find({ userId: id }).then((user) => {
+        if (!user) {
+            res.status(500).json(`invalid password reset request`);
+        } else if (PasswordReset.validateResetString(resetString)) {
+            let hashedPassword = Users.hashPassword(password);
+            Users.findOneAndUpdate({ _id: id },
+                {
+                    $set:
                     {
-                        $set:
-                        {
-                            password: hashedPassword;
-                        }
-                    },
-                    { new: true },// This line makes sure that the updated document is returned
-                    (err, updatedUser) => {
-                        if (err) {
-                            console.error(err);
-                            res.status(500).send('Error: ' + err);
-                        } else {
-                            res.json(updatedUser);
-                        }
-                    });
-                }else {
-                    res.status(500).json(`reset code is not valid`);
-                }
-            }).catch((error) => {
-                res.status(500).json(error);
-            })
+                        password: hashedPassword
+                    }
+                },
+                { new: true },// This line makes sure that the updated document is returned
+                (err, updatedUser) => {
+                    if (err) {
+                        console.error(err);
+                        res.status(500).send('Error: ' + err);
+                    } else {
+                        res.json(updatedUser);
+                    }
+                });
+        } else {
+            res.status(500).json(`reset code is not valid`);
+        }
+    }).catch((error) => {
+        res.status(500).json(error);
+    })
 });
 
 
