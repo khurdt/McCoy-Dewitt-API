@@ -66,7 +66,7 @@ passwordResetSchema.statics.hashResetString = function (resetString) {
   return bcrypt.hashSync(resetString, 10);
 }
 
-passwordResetSchema.methods.validateResetString = function (resetString) {
+passwordResetSchema.statics.validateResetString = function (resetString) {
   return bcrypt.compareSync(resetString, this.resetString);
 }
 
