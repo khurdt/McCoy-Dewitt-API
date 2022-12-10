@@ -329,7 +329,7 @@ app.put('/password-reset', (req, res) => {
 
     PasswordReset.findOne({ userId: req.body.id }).then((user) => {
         if (user) {
-            if (user.validateResetString(req.body.resetString)) {
+            if (user.resetString === req.body.resetString) {
                 let hashedPassword = Users.hashPassword(req.body.password);
                 Users.findOneAndUpdate({ _id: objectId },
                     {
