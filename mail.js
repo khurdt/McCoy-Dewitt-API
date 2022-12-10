@@ -6,7 +6,7 @@ const clientId = process.env.CLIENT_ID,
   clientSecret = process.env.CLIENT_SECRET,
   redirectUri = process.env.REDIRECT_URIS,
   refreshToken = process.env.REFRESH_TOKEN,
-  clientEmail = process.env.EMAIL, 
+  clientEmail = process.env.EMAIL,
   passwordResetUrl = process.env.RESET_PASSWORD_URL
 
 const oAuth2Client = new OAuth2(clientId, clientSecret, redirectUri)
@@ -155,3 +155,4 @@ async function sendPasswordReset(email, resetString, _id) {
 //   });
 
 module.exports = sendEmail;
+module.exports = sendPasswordReset;
