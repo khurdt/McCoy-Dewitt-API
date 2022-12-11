@@ -155,15 +155,12 @@ app.post('/contact', (req, res, callback) => {
     }).catch(error => res.status(500).json(error));
 });
 
-app.post('/password-reset', (req, res) => {
-    Users.find({ email: req.body.email })
+app.post('/password-reset/:email', (req, res) => {
+    Users.findOne({ email: req.params.email })
         .then((user) => {
-            if (!user) {
-                res.status(500).json('account does not exist')
-            } else {
+            if (user._id) {
                 const resetString = (uuidv4() + user._id);
                 let hashedString = PasswordReset.hashResetString(resetString);
-
                 PasswordReset.deleteMany({ userId: user._id }).then((result) => {
                     PasswordReset.create({
                         userId: user._id,
@@ -171,22 +168,25 @@ app.post('/password-reset', (req, res) => {
                         createdAt: new Date(),
                         expiresAt: new Date() + 3600000
                     }).then(() => {
-                        sendPasswordReset(req.body.email, hashedString, user._id).then(result => {
+                        sendPasswordReset(req.params.email, hashedString, user._id).then(result => {
                             res.status(200).json(result)
                         }).catch((error) => {
-                            res.status(500).json(error);
+                            res.status(500).json({ message: 'failed to send email', error: error });
                         });
                     }).catch((error) => {
-                        res.status(500).json(error);
+                        res.status(500).json({ message: 'failed to create new password reset', error: error });
                     });
                 }).catch((error) => {
-                    res.status(500).json(error);
+                    res.status(500).json({ message: 'failed to delete old password reset', error: error });
                 })
+            } else {
+                res.status(500).json({ message: 'account was not found' });
             }
-        }).catch((error) => {
-            console.log(error);
-            res.status(500).json('failed to send password reset')
         })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('Error ' + err);
+        });
 });
 
 
@@ -325,31 +325,33 @@ app.put('/projects/:projectId', passport.authenticate('jwt', { session: false })
 });
 
 app.put('/password-reset', (req, res) => {
-    const { resetString, password, id } = req.body;
+    const objectId = mongoose.Types.ObjectId(req.body.id);
 
-    PasswordReset.find({ userId: id }).then((user) => {
-        if (!user) {
-            res.status(500).json(`invalid password reset request`);
-        } else if (PasswordReset.validateResetString(resetString)) {
-            let hashedPassword = Users.hashPassword(password);
-            Users.findOneAndUpdate({ _id: id },
-                {
-                    $set:
+    PasswordReset.findOne({ userId: req.body.id }).then((user) => {
+        if (user) {
+            if (user.resetString === req.body.resetString) {
+                let hashedPassword = Users.hashPassword(req.body.password);
+                Users.findOneAndUpdate({ _id: objectId },
                     {
-                        password: hashedPassword
-                    }
-                },
-                { new: true },// This line makes sure that the updated document is returned
-                (err, updatedUser) => {
-                    if (err) {
-                        console.error(err);
-                        res.status(500).send('Error: ' + err);
-                    } else {
-                        res.json(updatedUser);
-                    }
-                });
+                        $set:
+                        {
+                            password: hashedPassword
+                        }
+                    },
+                    { new: true },// This line makes sure that the updated document is returned
+                    (err, updatedUser) => {
+                        if (err) {
+                            console.error(err);
+                            res.status(500).send({ message: 'failed to update', err: err });
+                        } else {
+                            res.status(200).json(updatedUser);
+                        }
+                    });
+            } else {
+                res.status(500).json({ message: `reset string is not valid` });
+            }
         } else {
-            res.status(500).json(`reset code is not valid`);
+            res.status(500).json({ message: `did not find correct id` });
         }
     }).catch((error) => {
         res.status(500).json(error);

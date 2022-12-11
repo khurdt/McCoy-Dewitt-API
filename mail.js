@@ -74,7 +74,6 @@ async function sendPasswordReset(email, resetString, _id) {
       subject: `McCoy DeWitt LLC: Password Reset`,
       html: `
       <div style="textAlign:left;marginLeft:30px">
-      <p>You requested to reset your password at ${date}</p>
       <p>Click the link below to reset your password</p>
       <a href=${passwordResetUrl + '/' + _id + '/' + 'token' + '/' + resetString}>
       reset password</a>
@@ -90,6 +89,12 @@ async function sendPasswordReset(email, resetString, _id) {
     return error;
   }
 }
+
+// sendPasswordReset('', 'resetString', '99999').then(result => {
+//   console.log('email sent', result)
+// }).catch((error) => {
+//   console.log('something went wrong', error);
+// });
 
 // sendEmail('Kevin', 'Hurdt', '@', '123', 'this is a test').then(result => {
 //   console.log('email sent', result)
@@ -155,3 +160,4 @@ async function sendPasswordReset(email, resetString, _id) {
 //   });
 
 module.exports = sendEmail;
+module.exports = sendPasswordReset;
