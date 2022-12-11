@@ -6,7 +6,7 @@ const clientId = process.env.CLIENT_ID,
   clientSecret = process.env.CLIENT_SECRET,
   redirectUri = process.env.REDIRECT_URIS,
   refreshToken = process.env.REFRESH_TOKEN,
-  clientEmail = process.env.EMAIL, 
+  clientEmail = process.env.EMAIL,
   passwordResetUrl = process.env.RESET_PASSWORD_URL
 
 const oAuth2Client = new OAuth2(clientId, clientSecret, redirectUri)
@@ -76,7 +76,7 @@ async function sendPasswordReset(email, resetString, _id) {
       <div style="textAlign:left;marginLeft:30px">
       <p>You requested to reset your password at ${date}</p>
       <p>Click the link below to reset your password</p>
-      <a href=${passwordResetUrl + '/' + _id + '/' + resetString}>
+      <a href=${passwordResetUrl + '/' + _id + '/' + 'token' + '/' + resetString}>
       reset password</a>
       </div>`
     };
