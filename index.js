@@ -26,6 +26,12 @@ const PasswordReset = Models.PasswordReset;
 
 mongoose.connect(process.env.MONGO_ATLAS, { useNewUrlParser: true, useUnifiedTopology: true });
 
+function addHours(numOfHours, date = new Date()) {
+    date.setTime(date.getTime() + numOfHours * 60 * 60 * 1000);
+
+    return date;
+}
+
 // const { check, validationResult } = require('express-validator');
 /**
  * these are the schema models of movies and users imported from models.js
@@ -156,7 +162,8 @@ app.post('/contact', (req, res, callback) => {
 });
 
 app.post('/password-reset/:email', (req, res) => {
-    Users.findOne({ email: req.params.email })
+    const { email } = req.params;
+    Users.findOne({ email: email })
         .then((user) => {
             if (user._id) {
                 const resetString = (uuidv4() + user._id);
@@ -166,18 +173,18 @@ app.post('/password-reset/:email', (req, res) => {
                         userId: user._id,
                         resetString: hashedString,
                         createdAt: new Date(),
-                        expiresAt: new Date() + 3600000
+                        expiresAt: addHours(6)
                     }).then(() => {
-                        sendPasswordReset(req.params.email, hashedString, user._id).then(result => {
+                        sendPasswordReset(email, resetString, user._id).then(result => {
                             res.status(200).json(result)
                         }).catch((error) => {
-                            res.status(500).json({ message: 'failed to send email', error: error });
+                            res.status(500).json({ message: 'failed to send email' });
                         });
                     }).catch((error) => {
-                        res.status(500).json({ message: 'failed to create new password reset', error: error });
+                        res.status(500).json({ message: 'failed to create new password reset' });
                     });
                 }).catch((error) => {
-                    res.status(500).json({ message: 'failed to delete old password reset', error: error });
+                    res.status(500).json({ message: 'failed to delete old password reset' });
                 })
             } else {
                 res.status(500).json({ message: 'account was not found' });
@@ -189,18 +196,6 @@ app.post('/password-reset/:email', (req, res) => {
         });
 });
 
-
-/**
- * adds or registers a user to users collection
- * checks username, password, email format using express-validator
- * hashes provided password before storing
- * if no errors, it will proceed to store user info in database
- * @param username
- * @param password
- * @param email
- * @param birthday
- * @returns one user 
- */
 app.post('/users',
     [
         check('firstName', 'username contains non non-alphanumeric characters - not allowed').isAlphanumeric(),
@@ -325,12 +320,13 @@ app.put('/projects/:projectId', passport.authenticate('jwt', { session: false })
 });
 
 app.put('/password-reset', (req, res) => {
-    const objectId = mongoose.Types.ObjectId(req.body.id);
+    const { id, resetString, password } = req.body;
+    const objectId = mongoose.Types.ObjectId(id);
 
-    PasswordReset.findOne({ userId: req.body.id }).then((user) => {
+    PasswordReset.findOne({ userId: id }).then((user) => {
         if (user) {
-            if (user.resetString === req.body.resetString) {
-                let hashedPassword = Users.hashPassword(req.body.password);
+            if (PasswordReset.validateResetString(resetString)) {
+                let hashedPassword = Users.hashPassword(password);
                 Users.findOneAndUpdate({ _id: objectId },
                     {
                         $set:

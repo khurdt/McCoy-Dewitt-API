@@ -74,7 +74,9 @@ async function sendPasswordReset(email, resetString, _id) {
       subject: `McCoy DeWitt LLC: Password Reset`,
       html: `
       <div style="textAlign:left;marginLeft:30px">
-      <p>Click the link below to reset your password</p>
+      <p>We heard that you need to reset your password</p>
+      <p>not a problem.</p>
+      <p>Click the link below to change your password</p>
       <a href=${passwordResetUrl + '/' + _id + '/' + 'token' + '/' + resetString}>
       reset password</a>
       </div>`
