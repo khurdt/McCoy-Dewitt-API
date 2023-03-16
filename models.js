@@ -3,6 +3,7 @@ const mongoose = require('mongoose'),
 
 /**schema for movies to be recieved or sent to database */
 let projectSchema = mongoose.Schema({
+  createdAt: { type: Date, required: true },
   service: { type: String, required: true },
   description: { type: String, required: true },
   location: { type: String, required: true },

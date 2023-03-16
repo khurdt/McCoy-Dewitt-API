@@ -241,14 +241,15 @@ app.post('/users',
     });
 
 
-    app.post('/projects', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.post('/projects', passport.authenticate('jwt', { session: false }), (req, res) => {
     Projects.create({
+        createdAt: new Date(),
         service: req.body.service,
         description: req.body.description,
         location: req.body.location,
         insuranceClaim: req.body.insuranceClaim,
         users: req.body.users,
-        status: req.body.status
+        status: req.body.status,
     }).then((project) => {
         res.status(201).json(project)
     })
@@ -327,30 +328,30 @@ app.put('/password-reset', (req, res) => {
     PasswordReset.findOne({ userId: id }).then((user) => {
         if (user) {
             if (user.expiresAt > new Date()) {
-            if (user.validateResetString(resetString)) {
-                let hashedPassword = Users.hashPassword(password);
-                Users.findOneAndUpdate({ _id: objectId },
-                    {
-                        $set:
+                if (user.validateResetString(resetString)) {
+                    let hashedPassword = Users.hashPassword(password);
+                    Users.findOneAndUpdate({ _id: objectId },
                         {
-                            password: hashedPassword
-                        }
-                    },
-                    { new: true },// This line makes sure that the updated document is returned
-                    (err, updatedUser) => {
-                        if (err) {
-                            console.error(err);
-                            res.status(500).send({ message: 'failed to update', err: err });
-                        } else {
-                            res.status(200).json(updatedUser);
-                        }
-                    });
+                            $set:
+                            {
+                                password: hashedPassword
+                            }
+                        },
+                        { new: true },// This line makes sure that the updated document is returned
+                        (err, updatedUser) => {
+                            if (err) {
+                                console.error(err);
+                                res.status(500).send({ message: 'failed to update', err: err });
+                            } else {
+                                res.status(200).json(updatedUser);
+                            }
+                        });
+                } else {
+                    res.status(500).json({ message: `reset string is not valid` });
+                }
             } else {
-                res.status(500).json({ message: `reset string is not valid` });
+                res.status(500).json({ message: `reset request has expired` });
             }
-        }else {
-            res.status(500).json({ message: `reset request has expired` });
-        }
         } else {
             res.status(500).json({ message: `did not find correct id` });
         }
